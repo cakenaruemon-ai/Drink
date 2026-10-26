@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>สมุดปิดกะ</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#b81a33">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="สมุดปิดกะ">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: sticky red POS-style bar + tabs; on wide screens "new shift" is images (left) beside a receipt-style form (right); everything stacks on phones */
+:root{
+  --bg:#f5f2f2; --surface:#ffffff; --sunk:#faf7f7; --ink:#201a1b; --muted:#6f6567; --line:#e7dfe0;
+  --accent:#c21d37; --accent-ink:#ffffff; --accent-soft:#fbe8eb;
+  --good:#1d7a4c; --good-soft:#e5f4ec; --warn:#a86300; --warn-soft:#fdf1df; --bad:#b3261e; --bad-soft:#fde9e7;
+  --bar:#b81a33; --bar-ink:#ffffff;
+  --f-display:"Bai Jamjuree","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141112; --surface:#1e1a1b; --sunk:#191617; --ink:#f2ecec; --muted:#a69c9e; --line:#352e30;
+  --accent:#ff5c72; --accent-ink:#1a0b0e; --accent-soft:#3a1c22;
+  --good:#4fc68d; --good-soft:#15291f; --warn:#e5a63c; --warn-soft:#2e2314; --bad:#ff6d63; --bad-soft:#331816;
+  --bar:#7e1426; --bar-ink:#ffffff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141112; --surface:#1e1a1b; --sunk:#191617; --ink:#f2ecec; --muted:#a69c9e; --line:#352e30;
+  --accent:#ff5c72; --accent-ink:#1a0b0e; --accent-soft:#3a1c22;
+  --good:#4fc68d; --good-soft:#15291f; --warn:#e5a63c; --warn-soft:#2e2314; --bad:#ff6d63; --bad-soft:#331816;
+  --bar:#7e1426; --bar-ink:#ffffff; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{color-scheme:light}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font-size:14px}
+img{max-width:100%}
+.login{min-height:100vh;display:grid;place-items:center;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.login form{width:min(380px,100%);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.login h1{font-size:26px;color:var(--accent)}
+.login label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.login input{border:1px solid var(--line);background:var(--sunk);border-radius:10px;padding:10px 12px;font-size:16px}
+.login .err{color:var(--bad);font-size:13px;min-height:1.2em}
+.who{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;opacity:.9}
+.who button{background:rgba(255,255,255,.15);color:var(--bar-ink);border:0;border-radius:8px;padding:5px 10px;cursor:pointer;font:inherit}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bar)}
+button,input,select{font:inherit;color:inherit}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.25}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bar);color:var(--bar-ink)}
+.top-in{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px 0;display:flex;flex-direction:column;gap:8px}
+.brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand h1{font-size:22px;font-weight:700;letter-spacing:.2px}
+.brand small{opacity:.8;font-size:13px}
+nav.tabs{display:flex;gap:4px;overflow-x:auto}
+nav.tabs button{background:none;border:0;color:var(--bar-ink);opacity:.75;padding:8px 14px 10px;border-radius:10px 10px 0 0;cursor:pointer;font-weight:500;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{background:var(--bg);color:var(--ink);opacity:1}
+nav.tabs button:focus-visible{outline:2px solid var(--bar-ink);outline-offset:-4px}
+
+main{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 48px}
+.view{display:flex;flex-direction:column;gap:16px}
+
+.banner{border-radius:var(--r);padding:10px 14px;background:var(--warn-soft);color:var(--ink);border:1px solid var(--line);font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--surface);padding:9px 14px;border-radius:10px;cursor:pointer;font-weight:500;min-height:40px}
+.btn:hover{border-color:var(--muted)}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.ghost{background:none;border-color:transparent}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.sm{min-height:32px;padding:5px 10px;font-size:13px}
+
+/* New shift */
+.new-grid{display:grid;grid-template-columns:1fr;gap:16px;align-items:start}
+@media (min-width:920px){.new-grid{grid-template-columns:360px minmax(0,1fr)}.new-grid .left{position:sticky;top:120px}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel h2{font-size:18px}
+.drop{border:2px dashed var(--line);border-radius:var(--r);padding:20px 14px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;background:var(--sunk);cursor:pointer}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop strong{font-family:var(--f-display);font-size:16px}
+.drop span{color:var(--muted);font-size:13px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.thumb{position:relative;aspect-ratio:3/4;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--sunk);max-width:100%}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+.thumb .x{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;line-height:1}
+.thumb .st{position:absolute;left:0;right:0;bottom:0;font-size:11px;padding:2px 6px;background:rgba(0,0,0,.55);color:#fff}
+.ai-row{display:flex;flex-direction:column;gap:8px}
+.status{font-size:13px;color:var(--muted);min-height:1.5em}
+.status.err{color:var(--bad)}
+
+.receipt{display:flex;flex-direction:column;gap:18px}
+.sec{display:flex;flex-direction:column;gap:2px}
+.sec h3{font-size:16px;padding-bottom:6px;border-bottom:1px solid var(--line);margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sec h3 em{font-style:normal;font-family:var(--f-body);font-weight:400;font-size:12px;color:var(--muted)}
+.fields{display:grid;grid-template-columns:1fr;column-gap:28px}
+@media (min-width:640px){.fields.two{grid-template-columns:1fr 1fr}}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:3px 0;min-width:0}
+.row label{color:var(--muted);font-size:14px;flex:1;min-width:0}
+.row.total label{color:var(--ink);font-weight:600}
+.row input{width:min(170px,52%);text-align:right;border:1px solid transparent;background:var(--sunk);border-radius:8px;padding:6px 8px;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.row input[type=text].txt{font-family:var(--f-body)}
+.row input[type=datetime-local]{width:min(210px,60%);font-family:var(--f-num);font-size:13px}
+.row input:hover{border-color:var(--line)}
+.row.total input{font-weight:600}
+input.ai{background:var(--accent-soft)}
+
+.lines{display:flex;flex-direction:column;gap:8px}
+.line{display:grid;grid-template-columns:86px 110px minmax(0,1fr) auto;gap:6px;align-items:center}
+.line.pay{grid-template-columns:minmax(0,1fr) 130px auto}
+.line input,.line select{border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:6px 8px;min-width:0;width:100%}
+.line .amt{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.line .when{grid-column:2 / 4;font-family:var(--f-num);font-size:13px}
+.line .rm{border:0;background:none;color:var(--muted);cursor:pointer;width:32px;height:32px;border-radius:8px}
+.line .rm:hover{color:var(--bad);background:var(--bad-soft)}
+.line select.in{color:var(--good)} .line select.out{color:var(--bad)}
+@media (max-width:520px){.line{grid-template-columns:76px minmax(0,1fr) auto}.line .reason{grid-column:1 / 3;order:3}.line .when{grid-column:1 / 3;order:4}.line .rm{order:2}}
+
+.checks{display:flex;flex-direction:column;gap:6px;background:var(--sunk);border-radius:var(--r);padding:12px}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px}
+.check b{flex:none;width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;font-size:12px}
+.check.ok b{background:var(--good-soft);color:var(--good)}
+.check.no b{background:var(--bad-soft);color:var(--bad)}
+.check.warn b{background:var(--warn-soft);color:var(--warn)}
+.kpi small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.kpi.lead small{color:inherit;opacity:.85}
+.ov-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ov-head .status{margin:0}
+.tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tally div{border-radius:10px;padding:10px 12px;background:var(--sunk)}
+.tally strong{display:block;font-family:var(--f-num);font-size:22px;font-variant-numeric:tabular-nums}
+.tally span{font-size:13px;color:var(--muted)}
+.tally .good strong{color:var(--good)} .tally .warn strong{color:var(--warn)} .tally .bad strong{color:var(--bad)}
+.todo{display:flex;flex-direction:column;gap:6px}
+.todo button{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;text-align:left;width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;cursor:pointer}
+.todo button:hover{border-color:var(--muted)}
+.todo ul{margin:2px 0 0;padding-left:18px;color:var(--muted);font-size:13px}
+.verify{display:flex;flex-direction:column;gap:8px;background:var(--sunk);border-radius:var(--r);padding:12px}
+.verify .row input{background:var(--surface);border-color:var(--line)}
+.verify .d{color:var(--muted);font-size:12.5px}
+.slips{display:flex;flex-direction:column;gap:6px}
+.slip{display:grid;grid-template-columns:48px minmax(0,1fr) 120px auto;gap:10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:10px}
+.slip img,.slip .noimg{width:48px;height:64px;object-fit:cover;border-radius:6px;cursor:zoom-in;background:var(--sunk);display:grid;place-items:center;color:var(--muted)}
+.slip-main{min-width:0}
+.slip .meta{color:var(--muted);font-size:12.5px;overflow-wrap:anywhere}
+.slip .amt{text-align:right;border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:6px 8px;width:100%;min-width:0;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.slip .rm{border:0;background:none;color:var(--muted);cursor:pointer;min-width:32px;height:32px;border-radius:8px}
+.slip .rm:hover,.slip .rm[data-armed]{color:var(--bad);background:var(--bad-soft)}
+.chips.left{justify-content:flex-start;margin-top:4px}
+.mflags{grid-column:1 / -1;display:flex;gap:6px;flex-wrap:wrap}
+.mflags:empty{display:none}
+.sus{display:flex;flex-direction:column;gap:6px}
+.sus button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;text-align:left;width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;cursor:pointer}
+.sus button:hover{border-color:var(--muted)}
+.sus .meta{color:var(--muted);font-size:12.5px}
+.pair{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.pair .names{min-width:0;flex:1 1 260px}
+.pair .names b{font-weight:600}
+.pair .acts{display:flex;gap:6px;flex-wrap:wrap}
+#rTable select{border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:4px 6px;max-width:160px}
+@media (max-width:520px){.line .mflags{order:5}}
+@media (max-width:520px){.slip{grid-template-columns:48px minmax(0,1fr) auto}.slip .amt{grid-column:2 / 3}}
+.check .d{color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+textarea{width:100%;border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:8px;font:inherit;color:inherit;min-height:60px;resize:vertical}
+
+/* History */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.toolbar select,.toolbar input{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px;min-height:40px}
+.toolbar input{flex:1;min-width:160px}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;cursor:pointer;text-align:left;width:100%}
+.item:hover{border-color:var(--muted)}
+.item .when{font-family:var(--f-display);font-weight:600;font-size:16px}
+.item .meta{color:var(--muted);font-size:13px;display:flex;gap:10px;flex-wrap:wrap}
+.item .amt{font-family:var(--f-num);font-weight:600;font-size:17px;text-align:right;font-variant-numeric:tabular-nums}
+.chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.chip{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--muted);white-space:nowrap}
+.chip.good{background:var(--good-soft);color:var(--good)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r);padding:28px 18px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font-family:var(--f-display);font-size:17px;margin-bottom:4px}
+
+/* Summary */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.kpi span{display:block;color:var(--muted);font-size:13px}
+.kpi strong{font-family:var(--f-num);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.kpi.lead{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.kpi.lead span{color:inherit;opacity:.85}
+.chart-wrap{overflow-x:auto}
+.chart-wrap svg{display:block;min-width:520px;width:100%;height:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500;font-size:12.5px;letter-spacing:.3px}
+td.n,th.n{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl-wrap{overflow-x:auto}
+.bar-cell{display:flex;align-items:center;gap:8px}
+.bar-cell i{display:block;height:8px;border-radius:4px;background:var(--accent);opacity:.75}
+.two-col{display:grid;grid-template-columns:1fr;gap:16px}
+@media (min-width:860px){.two-col{grid-template-columns:1fr 1fr}}
+
+/* Sheet / modal */
+.sheet-back{position:fixed;inset:0;background:rgba(10,6,7,.55);z-index:20;display:flex;justify-content:center;align-items:flex-end}
+@media (min-width:720px){.sheet-back{align-items:center;padding:24px}}
+.sheet{background:var(--surface);color:var(--ink);width:100%;max-width:760px;max-height:92vh;overflow:auto;border-radius:16px 16px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+@media (min-width:720px){.sheet{border-radius:16px}}
+.sheet-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.kv{display:grid;grid-template-columns:1fr auto;gap:2px 14px;font-size:14px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.kv .t{color:var(--ink);font-weight:600}
+.light{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
+.light img{max-height:100%;max-width:100%;object-fit:contain}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:40;font-size:14px;max-width:calc(100% - 32px)}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bad-soft);border-radius:10px;padding:8px 10px;font-size:14px}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(16px);opacity:.6}}}
+</style>
+
+</head>
+<body>
+<div class="login" id="login" hidden>
+  <form id="loginForm" autocomplete="on">
+    <h1>สมุดปิดกะ</h1>
+    <div class="status" id="loginNote">เข้าสู่ระบบด้วยบัญชีเจ้าของร้าน</div>
+    <label>อีเมล<input id="lgEmail" type="email" autocomplete="username" required></label>
+    <label>รหัสผ่าน<input id="lgPass" type="password" autocomplete="current-password" required></label>
+    <div class="err" id="lgErr" role="alert"></div>
+    <button class="btn primary" id="lgBtn" type="submit">เข้าสู่ระบบ</button>
+  </form>
+</div>
+<div id="app" hidden>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><h1>สมุดปิดกะ</h1><small>บันทึกยอดปิดกะจากรูปหน้าจอ POS</small><span class="who"><span id="who"></span><button id="logout" type="button">ออกจากระบบ</button></span></div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" id="tab-overview" aria-selected="true" data-tab="overview">ภาพรวม</button>
+      <button role="tab" id="tab-new" aria-selected="false" data-tab="new">＋ บันทึกกะใหม่</button>
+      <button role="tab" id="tab-slips" aria-selected="false" data-tab="slips">ตรวจสลิป</button>
+      <button role="tab" id="tab-reasons" aria-selected="false" data-tab="reasons">เหตุผลเงินออก</button>
+      <button role="tab" id="tab-history" aria-selected="false" data-tab="history">ประวัติ</button>
+      <button role="tab" id="tab-summary" aria-selected="false" data-tab="summary">สรุปรายเดือน</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div id="dbBanner" class="banner" hidden>เชื่อมต่อฐานข้อมูลไม่ได้ ตรวจอินเทอร์เน็ตแล้วโหลดหน้าใหม่</div>
+
+  <!-- OVERVIEW -->
+  <section class="view" id="view-overview"><div class="empty">กำลังโหลด…</div></section>
+
+  <!-- NEW -->
+  <section class="view" id="view-new" hidden>
+    <div class="new-grid">
+      <div class="left panel">
+        <h2 id="formTitle">รูปหน้าจอปิดกะ</h2>
+        <label class="drop" id="drop" for="fileIn">
+          <strong>แตะเพื่อเลือกรูป หรือลากรูปมาวาง</strong>
+          <span>ใส่ได้หลายรูป เช่น หน้าสรุปลิ้นชัก + รายการเงินเข้า-ออก ที่เลื่อนต่อกัน · วางจากคลิปบอร์ดได้ (Ctrl+V)</span>
+        </label>
+        <input type="file" id="fileIn" accept="image/*" multiple hidden>
+        <div class="thumbs" id="thumbs"></div>
+        <div class="ai-row">
+          <button class="btn primary" id="aiBtn" disabled>อ่านข้อมูลจากรูป</button>
+          <div class="status" id="aiStatus">เลือกรูปก่อน แล้วกดอ่านข้อมูล ระบบจะกรอกฟอร์มให้ ตรวจทานแล้วกดบันทึก</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="receipt" id="form"></div>
+        <div class="sec">
+          <h3>รายการเงินเข้า-ออกระหว่างกะ <em id="moveSum"></em></h3>
+          <div class="lines" id="moves"></div>
+          <div><button class="btn sm" id="addMove">＋ เพิ่มรายการ</button></div>
+        </div>
+        <div class="sec">
+          <h3>การชำระเงิน <em id="paySum"></em></h3>
+          <div class="lines" id="pays"></div>
+          <div><button class="btn sm" id="addPay">＋ เพิ่มช่องทาง</button></div>
+          <div class="row"><label for="f_tipDeducted">หัก ทิป (ไม่นับเป็นยอดขาย)</label><input id="f_tipDeducted" inputmode="decimal" class="numin"></div>
+        </div>
+        <div class="sec">
+          <h3>หมายเหตุ</h3>
+          <textarea id="f_note" placeholder="เช่น ลิ้นชักติด, ลูกค้าขอคืนเงิน 1 บิล"></textarea>
+        </div>
+        <div class="checks" id="checks"></div>
+        <div id="dupWarn" class="banner" hidden></div>
+        <div class="actions">
+          <button class="btn ghost" id="clearBtn">ล้างฟอร์ม</button>
+          <button class="btn primary" id="saveBtn">บันทึกกะนี้</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIPS -->
+  <section class="view" id="view-slips" hidden>
+    <div class="toolbar"><label for="slShift" class="status" style="margin:0">กะที่ตรวจ</label><select id="slShift" style="flex:1;min-width:0"></select></div>
+    <div id="slTally"></div>
+    <div class="new-grid">
+      <div class="left panel">
+        <h2>เพิ่มสลิปโอนเงิน</h2>
+        <label class="drop" id="slDrop" for="slFile">
+          <strong>แตะเพื่อเลือกสลิป หรือลากมาวาง</strong>
+          <span>เลือกได้ทีละหลายสิบใบ ระบบอ่านยอด เวลา ธนาคาร เลขอ้างอิง และ QR ในสลิป แล้วรวมยอดเทียบกับ POS (อ่านในเครื่อง ไม่มีค่าใช้จ่าย)</span>
+        </label>
+        <input type="file" id="slFile" accept="image/*" multiple hidden>
+        <div class="status" id="slStatus"></div>
+        <input id="slReceiver" type="hidden">
+        <div class="status">ตัวอ่านรูปในเครื่องอ่านชื่อผู้โอน/ผู้รับได้ไม่แม่น จึงไม่ได้ใช้เช็กชื่อบัญชี ให้ดูรูปสลิปประกอบ</div>
+      </div>
+      <div class="panel">
+        <div class="ov-head"><h2>สลิปของกะนี้</h2><button class="btn sm" id="slCsv">ดาวน์โหลด CSV</button></div>
+        <div id="slList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REASONS -->
+  <section class="view" id="view-reasons" hidden>
+    <div class="toolbar"><label for="rMonth" class="status" style="margin:0">ช่วงที่ตรวจ</label><select id="rMonth"></select></div>
+    <div class="panel"><div class="ov-head"><h2>รายการน่าสงสัย</h2><span class="status" id="rSusN"></span></div><div id="rSus"></div></div>
+    <div class="panel"><div class="ov-head"><h2>ชื่อที่น่าจะเป็นรายการเดียวกัน</h2><span class="status">รวมแล้วยอดสรุปจะนับเป็นชื่อเดียว ข้อมูลกะเดิมไม่ถูกแก้</span></div><div id="rPairs"></div></div>
+    <div class="panel"><div class="ov-head"><h2>รายชื่อเหตุผลทั้งหมด</h2><button class="btn sm" id="rApproveAll">ยืนยันเหตุผลใหม่ทั้งหมด</button></div>
+      <div class="status">เหตุผลที่ไม่เคยมีมาก่อนจะถูกเพิ่มที่นี่อัตโนมัติเมื่อบันทึกกะ และขึ้นป้าย “ใหม่” จนกว่าจะกดยืนยัน</div>
+      <div class="tbl-wrap" id="rTable"></div></div>
+  </section>
+
+  <!-- HISTORY -->
+  <section class="view" id="view-history" hidden>
+    <div class="toolbar">
+      <select id="hMonth" aria-label="เลือกเดือน"></select>
+      <input id="hSearch" placeholder="ค้นหา ชื่อคนปิดกะ / เหตุผลเงินออก / หมายเหตุ" aria-label="ค้นหา">
+    </div>
+    <div class="list" id="hList"></div>
+  </section>
+
+  <!-- SUMMARY -->
+  <section class="view" id="view-summary" hidden>
+    <div class="toolbar">
+      <select id="sMonth" aria-label="เลือกเดือน"></select>
+      <span style="flex:1"></span>
+      <button class="btn sm" id="csvShifts">ดาวน์โหลด CSV ยอดกะ</button>
+      <button class="btn sm" id="csvMoves">ดาวน์โหลด CSV เงินเข้า-ออก</button>
+    </div>
+    <div id="sBody" class="view"></div>
+  </section>
+</main>
+
+</div>
+<div id="sheetRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="config.js"></script>
+<script src="ocr-parse.js"></script>
+<script>
+(() => {
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = n => n == null || isNaN(n) ? "–" : Number(n).toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt0 = n => n == null || isNaN(n) ? "–" : Math.round(n).toLocaleString("th-TH");
+const num = v => { if (v == null) return null; if (typeof v === "number") return isFinite(v) ? v : null; const s = String(v).replace(/[,\s฿บาท]/g, "").trim(); if (!s) return null; const n = Number(s); return isFinite(n) ? n : null; };
+const sum = a => a.reduce((t, x) => t + (num(x) || 0), 0);
+const eq = (a, b) => Math.abs(a - b) < 0.015;
+const TH_MON = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+const TH_MON_FULL = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+const dt = s => { if (!s) return "–"; const m = /^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d):(\d\d))?/.exec(s); if (!m) return s; return `${+m[3]} ${TH_MON[+m[2]-1]} ${m[1]}${m[4] ? ` ${m[4]}:${m[5]}` : ""}`; };
+const hm = s => { const m = /T(\d\d:\d\d)/.exec(s || ""); return m ? m[1] : ""; };
+const monthLabel = ym => { const [y, m] = ym.split("-"); return `${TH_MON_FULL[+m-1]} ${y}`; };
+
+const FIELDS = [
+  { title: "ข้อมูลกะ", cols: 2, f: [
+    ["shiftNo", "กะที่", "text"], ["closedBy", "ปิดกะโดย", "text"],
+    ["openedAt", "วันที่-เวลาเปิด", "dt"], ["closedAt", "วันที่-เวลาปิด", "dt"] ] },
+  { title: "ลิ้นชักเก็บเงิน", note: "บาท", cols: 1, f: [
+    ["openingCash", "เงินสดเริ่มต้นเปิดกะ"], ["cashSales", "ยอดชำระเงินสด"], ["cashIn", "เงินเข้า"], ["cashOut", "เงินออก"],
+    ["expectedCash", "เงินสดรวมที่คาดไว้", "num", 1], ["countedCash", "เงินสดที่นับได้จริง", "num", 1], ["overShort", "ยอดเงินขาด/เกิน"],
+    ["withdrawn", "เงินสดที่ถอนออก"], ["remaining", "ยอดเงินสดคงเหลือในเครื่อง"] ] },
+  { title: "สรุปยอดขาย", note: "บาท", cols: 1, f: [
+    ["productSales", "ยอดขายสินค้า"], ["discount", "ส่วนลด"], ["penalty", "ค่าปรับ"], ["serviceCharge", "Service charge"],
+    ["vat", "ภาษีมูลค่าเพิ่ม"], ["tip", "ทิป"], ["cardFee", "ค่าธรรมเนียมบัตร"], ["rounding", "รวมปัดเศษ"], ["totalRevenue", "รายได้รวม", "num", 1] ] },
+  { title: "สถิติใบเสร็จ", cols: 2, f: [
+    ["receipts", "ใบเสร็จปกติ"], ["cancelledReceipts", "ใบเสร็จที่ถูกยกเลิก"], ["totalReceipts", "จำนวนใบเสร็จทั้งหมด"], ["customers", "จำนวนลูกค้าทั้งหมด"],
+    ["perHead", "ยอดขายต่อหัว"], ["perReceipt", "ยอดขายต่อใบเสร็จ"] ] },
+  { title: "ตรวจกับยอดจริง", note: "กรอกหลังเช็กบัญชีธนาคาร / นับเงินที่รับมอบ", cols: 1, f: [
+    ["bankReceived", "เงินโอน/พร้อมเพย์ที่เข้าบัญชีจริง"], ["cashReceived", "เงินสดที่รับมอบจริง"] ] },
+];
+const CASH = /สด|cash/i, NONCASH = /^(?!.*(สด|cash)).*/i;
+const NUM_KEYS = FIELDS.flatMap(s => s.f.filter(f => !f[2] || f[2] === "num").map(f => f[0])).concat(["tipDeducted"]);
+const INT_KEYS = ["receipts", "cancelledReceipts", "totalReceipts", "customers"];
+
+/* ---------- state ---------- */
+const S = { db: null, assets: null, sample: null, downloads: null, records: [], loaded: false,
+  editingId: null, editingCreatedAt: null, images: [], moves: [], pays: [], aiKeys: new Set(), dupOk: false, tab: "overview" };
+const DRAFT_KEY = "shiftlog-draft-v1";
+
+/* ---------- form rendering ---------- */
+function renderForm() {
+  $("#form").innerHTML = FIELDS.map(sec => `
+    <div class="sec"><h3>${esc(sec.title)}${sec.note ? `<em>${sec.note}</em>` : ""}</h3>
+      <div class="fields ${sec.cols === 2 ? "two" : ""}">
+      ${sec.f.map(([k, label, type, total]) => `
+        <div class="row ${total ? "total" : ""}"><label for="f_${k}">${esc(label)}</label>
+        ${type === "dt" ? `<input type="datetime-local" id="f_${k}">` :
+          type === "text" ? `<input type="text" class="txt" id="f_${k}">` :
+          `<input id="f_${k}" inputmode="decimal" class="numin" autocomplete="off">`}</div>`).join("")}
+      </div></div>`).join("");
+}
+function fieldEl(k) { return document.getElementById("f_" + k); }
+function setField(k, v, fromAi) {
+  const el = fieldEl(k); if (!el) return;
+  if (NUM_KEYS.includes(k)) { const n = num(v); el.value = n == null ? "" : (INT_KEYS.includes(k) ? String(n) : fmt(n)); }
+  else el.value = v ?? "";
+  el.classList.toggle("ai", !!fromAi);
+}
+function readForm() {
+  const r = {};
+  FIELDS.forEach(s => s.f.forEach(([k, , type]) => { const v = fieldEl(k).value.trim(); r[k] = (type === "text" || type === "dt") ? (v || null) : num(v); }));
+  r.tipDeducted = num(fieldEl("tipDeducted").value);
+  r.note = $("#f_note").value.trim() || null;
+  r.movements = S.moves.map(m => ({ type: m.type, amount: num(m.amount), reason: (m.reason || "").trim(), time: m.time || null, by: m.by || null })).filter(m => m.amount != null || m.reason);
+  r.payments = S.pays.map(p => ({ method: (p.method || "").trim(), amount: num(p.amount) })).filter(p => p.method || p.amount != null);
+  r.images = S.images.filter(i => i.id).map(i => i.id);
+  r.businessDate = (r.openedAt || r.closedAt || "").slice(0, 10) || null;
+  return r;
+}
+
+function renderMoves() {
+  $("#moves").innerHTML = S.moves.length ? S.moves.map((m, i) => `
+    <div class="line" data-i="${i}">
+      <select data-k="type" class="${m.type}" aria-label="ประเภท"><option value="in" ${m.type === "in" ? "selected" : ""}>เงินเข้า</option><option value="out" ${m.type === "out" ? "selected" : ""}>เงินออก</option></select>
+      <input data-k="amount" class="amt" inputmode="decimal" value="${esc(m.amount != null && m.amount !== "" ? fmt(num(m.amount)) : "")}" placeholder="0.00" aria-label="จำนวนเงิน">
+      <input data-k="reason" class="reason" value="${esc(m.reason)}" placeholder="เหตุผล เช่น ค่าแรงการ์ด" aria-label="เหตุผล" list="reasonList">
+      <button class="rm" data-rm="${i}" aria-label="ลบรายการ">✕</button>
+      <input data-k="time" class="when" type="datetime-local" value="${esc(m.time || "")}" aria-label="เวลา">
+      <div class="mflags" id="mf_${i}"></div>
+    </div>`).join("") : `<div class="status">ยังไม่มีรายการ</div>`;
+  updateSums();
+}
+function renderPays() {
+  $("#pays").innerHTML = S.pays.map((p, i) => `
+    <div class="line pay" data-i="${i}">
+      <input data-k="method" value="${esc(p.method)}" placeholder="ช่องทาง" list="payList" aria-label="ช่องทางชำระ">
+      <input data-k="amount" class="amt" inputmode="decimal" value="${esc(p.amount != null && p.amount !== "" ? fmt(num(p.amount)) : "")}" placeholder="0.00" aria-label="จำนวนเงิน">
+      <button class="rm" data-rm="${i}" aria-label="ลบช่องทาง">✕</button>
+    </div>`).join("");
+  updateSums();
+}
+function bindLines(container, arr, rerender) {
+  container.addEventListener("input", e => { const line = e.target.closest(".line"); if (!line) return; const k = e.target.dataset.k; arr()[+line.dataset.i][k] = e.target.value; if (k === "type") e.target.className = e.target.value; updateSums(); saveDraft(); });
+  container.addEventListener("focusout", e => { if (e.target.classList.contains("amt")) { const n = num(e.target.value); if (n != null) e.target.value = fmt(n); } });
+  container.addEventListener("click", e => { const b = e.target.closest("[data-rm]"); if (!b) return; arr().splice(+b.dataset.rm, 1); rerender(); saveDraft(); });
+}
+function updateSums() {
+  const ins = sum(S.moves.filter(m => m.type === "in").map(m => m.amount)), outs = sum(S.moves.filter(m => m.type === "out").map(m => m.amount));
+  $("#moveSum").textContent = S.moves.length ? `เข้า ${fmt(ins)} · ออก ${fmt(outs)}` : "";
+  $("#paySum").textContent = S.pays.length ? `รวม ${fmt(sum(S.pays.map(p => p.amount)))}` : "";
+  const mv = S.moves.map(m => ({ ...m, amount: num(m.amount) })), rr = { id: S.editingId };
+  mv.forEach((m, i) => { const el = document.getElementById("mf_" + i); if (el) el.innerHTML = chipHtml(moveFlags(m, i, mv, rr)); });
+  renderChecks();
+}
+
+/* ---------- consistency checks ---------- */
+function checks(r) {
+  const out = [], has = (...k) => k.every(x => r[x] != null);
+  if (has("openingCash", "cashSales", "cashIn", "cashOut", "expectedCash")) {
+    const v = r.openingCash + r.cashSales + r.cashIn - r.cashOut;
+    out.push({ ok: eq(v, r.expectedCash), t: "เงินสดที่คาดไว้ = เงินต้น + เงินสดขาย + เงินเข้า − เงินออก", d: `คำนวณได้ ${fmt(v)}` });
+  }
+  const mv = r.movements || [];
+  if (mv.length) {
+    const mf = mv.map((m, i) => moveFlags(m, i, mv, r.id ? r : { id: S.editingId }));
+    const nb = mf.filter(f => f.some(x => x[0] === "bad")).length, nw = mf.filter(f => f.length && !f.some(x => x[0] === "bad")).length;
+    if (nb) out.push({ ok: false, t: `รายการเงินเข้า-ออกน่าสงสัย ${nb} รายการ`, d: "ซ้ำ หรือชื่อคล้ายกัน" });
+    if (nw) out.push({ ok: false, level: "warn", t: `รายการเงินเข้า-ออกควรดู ${nw} รายการ`, d: "เหตุผลใหม่ / ยอดสูงกว่าปกติ / ชื่อคล้ายรายการเดิม" });
+  }
+  if (mv.length && has("cashIn", "cashOut")) {
+    const i = sum(mv.filter(m => m.type === "in").map(m => m.amount)), o = sum(mv.filter(m => m.type === "out").map(m => m.amount));
+    out.push({ ok: eq(i, r.cashIn) && eq(o, r.cashOut), t: "รายการเข้า-ออกครบตามยอดลิ้นชัก", d: `รายการ: เข้า ${fmt(i)} / ออก ${fmt(o)}` });
+  }
+  if (has("countedCash", "expectedCash")) {
+    const d = r.countedCash - r.expectedCash;
+    out.push({ ok: eq(d, 0), warn: true, t: eq(d, 0) ? "เงินนับได้ตรงกับที่คาดไว้" : (d < 0 ? `เงินขาด ${fmt(-d)}` : `เงินเกิน ${fmt(d)}`), d: r.overShort != null && !eq(r.overShort, d) ? `ช่องขาด/เกินกรอกไว้ ${fmt(r.overShort)}` : "" });
+  }
+  if (has("withdrawn", "remaining", "countedCash")) {
+    out.push({ ok: eq(r.withdrawn + r.remaining, r.countedCash), t: "ถอนออก + คงเหลือ = เงินที่นับได้", d: `ได้ ${fmt(r.withdrawn + r.remaining)}` });
+  }
+  const pays = r.payments || [];
+  if (pays.length && r.totalRevenue != null) {
+    const p = sum(pays.map(x => x.amount)) - (r.tipDeducted || 0);
+    out.push({ ok: eq(p, r.totalRevenue), t: "รวมช่องทางชำระ − ทิป = รายได้รวม", d: `ได้ ${fmt(p)}` });
+  }
+  const cashPay = pays.find(p => CASH.test(p.method || ""));
+  if (cashPay && r.cashSales != null) out.push({ ok: eq(num(cashPay.amount) || 0, r.cashSales), t: "ช่องทางเงินสด = ยอดชำระเงินสดในลิ้นชัก", d: "" });
+  if (r.productSales != null && r.totalRevenue != null) {
+    const comp = r.productSales - (r.discount || 0) + (r.penalty || 0) + (r.serviceCharge || 0) + (r.vat || 0) + (r.tip || 0) + (r.cardFee || 0) + (r.rounding || 0);
+    const ok = eq(comp, r.totalRevenue);
+    out.push({ ok, level: "warn", t: ok ? "ยอดขาย − ส่วนลด + Service + VAT + ปัดเศษ = รายได้รวม" : `องค์ประกอบยอดขายรวมได้ ${fmt(comp)} ต่างจากรายได้รวม ${fmt(comp - r.totalRevenue)}`,
+      d: ok ? "" : "อาจมาจากบิลที่ยกเลิก หรือ Service charge คิดเฉพาะบางรายการ ควรเปิดรายงานใน POS ดู" });
+  }
+  if (r.bankReceived != null && pays.length) {
+    const exp = sum(pays.filter(p => NONCASH.test(p.method || "")).map(p => p.amount)), d = r.bankReceived - exp;
+    out.push({ ok: eq(d, 0), t: eq(d, 0) ? "เงินโอนเข้าบัญชีจริงตรงกับ POS" : `เงินโอนเข้าบัญชีจริง${d < 0 ? "ขาด" : "เกิน"} ${fmt(Math.abs(d))}`, d: `POS ${fmt(exp)} · บัญชี ${fmt(r.bankReceived)}` });
+  }
+  if (r.cashReceived != null) {
+    const exp = r.withdrawn ?? r.countedCash;
+    if (exp != null) { const d = r.cashReceived - exp; out.push({ ok: eq(d, 0), t: eq(d, 0) ? "เงินสดที่รับมอบตรงกับยอดถอนออก" : `เงินสดรับมอบ${d < 0 ? "ขาด" : "เกิน"} ${fmt(Math.abs(d))}`, d: `ถอนออก ${fmt(exp)} · รับจริง ${fmt(r.cashReceived)}` }); }
+  }
+  if (r.id) {
+    const sl = slipsOf(r.id);
+    if (sl.length) {
+      const exp = sum(pays.filter(p => NONCASH.test(p.method || "")).map(p => p.amount)), got = sum(sl.map(s => s.amount)), d = got - exp;
+      out.push({ ok: eq(d, 0), t: eq(d, 0) ? `ยอดสลิปรวม ${sl.length} ใบ ตรงกับเงินโอนใน POS` : `ยอดสลิปรวม${d < 0 ? "ขาด" : "เกิน"} ${fmt(Math.abs(d))}`, d: `สลิป ${fmt(got)} · POS ${fmt(exp)}` });
+      const bad = sl.filter(s => slipFlags(s, r).some(f => f[0] === "bad")).length;
+      if (bad) out.push({ ok: false, t: `สลิปมีปัญหา ${bad} ใบ (ซ้ำ / ผู้รับไม่ตรง / ไม่มียอด)`, d: "" });
+    }
+  }
+  return out;
+}
+function checkHtml(c) {
+  return c.map(x => { const cls = x.ok ? "ok" : (x.level === "warn" ? "warn" : "no");
+    return `<div class="check ${cls}"><b>${x.ok ? "✓" : "!"}</b><div>${esc(x.t)}${x.d ? ` <span class="d">· ${esc(x.d)}</span>` : ""}</div></div>`; }).join("");
+}
+function audit(r) { const c = checks(r); return { c, err: c.filter(x => !x.ok && x.level !== "warn"), warn: c.filter(x => !x.ok && x.level === "warn"), bank: r.bankReceived != null, cash: r.cashReceived != null, slip: r.id ? slipsOf(r.id).length > 0 : false }; }
+function renderChecks() {
+  const c = checks(readForm());
+  $("#checks").innerHTML = `<strong style="font-family:var(--f-display)">ตรวจความถูกต้อง</strong>` + (c.length ? checkHtml(c)
+    : `<div class="check"><span class="d">กรอกตัวเลขแล้วระบบจะตรวจว่ายอดสัมพันธ์กันหรือไม่</span></div>`);
+}
+
+/* ---------- images ---------- */
+async function compress(file, max = 2400) {
+  try {
+    const bmp = await createImageBitmap(file);
+    const s = Math.min(1, max / Math.max(bmp.width, bmp.height));
+    const c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+    const b = await new Promise(r => c.toBlob(r, "image/jpeg", 0.86));
+    return b || file;
+  } catch { return file; }
+}
+async function addFiles(files) {
+  const list = [...files].filter(f => /^image\//.test(f.type));
+  if (!list.length) return;
+  for (const f of list) {
+    const img = { blob: null, url: URL.createObjectURL(f), id: null, status: "กำลังย่อรูป…" };
+    S.images.push(img); renderThumbs();
+    img.blob = await compress(f);
+    if (S.assets) {
+      img.status = "กำลังอัปโหลด…"; renderThumbs();
+      try { const res = await S.assets.upload(img.blob, { type: "image/jpeg" }); img.id = res.id; img.status = ""; saveDraft(); }
+      catch (e) { img.status = "อัปโหลดไม่สำเร็จ"; }
+    } else img.status = "ไม่ได้เก็บรูป";
+    renderThumbs();
+  }
+}
+function renderThumbs() {
+  $("#thumbs").innerHTML = S.images.map((im, i) => `
+    <div class="thumb"><img ${im.url ? `src="${esc(im.url)}" data-zoom="${esc(im.url)}"` : imgA(im.id)} alt="รูปที่ ${i + 1}">
+      <button class="x" data-rmimg="${i}" aria-label="เอารูปออก">✕</button>
+      ${im.status ? `<div class="st">${esc(im.status)}</div>` : ""}</div>`).join("");
+  $("#aiBtn").disabled = !S.images.length;
+}
+const drop = $("#drop");
+$("#fileIn").addEventListener("change", e => { addFiles(e.target.files); e.target.value = ""; });
+["dragenter", "dragover"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => addFiles(e.dataTransfer.files));
+document.addEventListener("paste", e => { if (S.tab !== "new") return; const f = [...(e.clipboardData?.files || [])]; if (f.length) { e.preventDefault(); addFiles(f); } });
+$("#thumbs").addEventListener("click", e => {
+  const rm = e.target.closest("[data-rmimg]");
+  if (rm) { const [im] = S.images.splice(+rm.dataset.rmimg, 1); if (im?.id && S.assets && !isSavedImage(im.id)) S.assets.delete(im.id).catch(() => {}); renderThumbs(); saveDraft(); return; }
+  const z = e.target.closest("[data-zoom]"); if (z) lightbox(z.dataset.zoom);
+});
+function isSavedImage(id) { return S.records.some(r => (r.images || []).includes(id)); }
+function lightbox(src) {
+  const d = document.createElement("div"); d.className = "light"; d.innerHTML = `<img src="${esc(src)}" alt="รูปขยาย">`;
+  d.onclick = () => d.remove(); document.addEventListener("keydown", function k(e) { if (e.key === "Escape") { d.remove(); document.removeEventListener("keydown", k); } });
+  document.body.appendChild(d);
+}
+
+/* ---------- reading images: free OCR on this device ---------- */
+let ocrWorker = null, ocrLabel = "";
+async function getOcr(st) {
+  if (ocrWorker) return ocrWorker;
+  if (typeof Tesseract === "undefined") throw { code: "no_ocr" };
+  if (st) st.textContent = "กำลังโหลดตัวอ่านภาษาไทย (ครั้งแรกใช้เวลาสักครู่ ครั้งต่อไปเร็วขึ้น)…";
+  ocrWorker = await Tesseract.createWorker("tha+eng", 1, { logger: m => { if (st && m.status === "recognizing text") st.textContent = `กำลังอ่าน${ocrLabel}… ${Math.round(m.progress * 100)}%`; } });
+  await ocrWorker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1" });
+  return ocrWorker;
+}
+async function prepForOcr(blob) {
+  const bmp = await createImageBitmap(blob);
+  const k = Math.min(2.2, 1800 / bmp.width);
+  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  const g = c.getContext("2d"); g.filter = "grayscale(1) contrast(1.35)"; g.drawImage(bmp, 0, 0, c.width, c.height);
+  return c;
+}
+async function ocrText(blob, st, label) { const w = await getOcr(st); ocrLabel = label || ""; const { data } = await w.recognize(await prepForOcr(blob)); return data.text || ""; }
+
+$("#aiBtn").addEventListener("click", async () => {
+  const btn = $("#aiBtn"), st = $("#aiStatus");
+  st.classList.remove("err"); btn.disabled = true;
+  try {
+    const texts = [];
+    for (let i = 0; i < S.images.length; i++) {
+      const im = S.images[i];
+      if (!im.blob && im.id && S.assets) im.blob = await S.assets.download(im.id).catch(() => null);
+      if (!im.blob) continue;
+      texts.push(await ocrText(im.blob, st, `รูป ${i + 1}/${S.images.length}`));
+    }
+    if (!texts.length) throw { code: "no_images" };
+    const d = ShiftOCR.parseShift(texts);
+    applyExtract(d);
+    const n = FIELDS.flatMap(s => s.f).filter(([k]) => d[k] != null).length;
+    st.textContent = `อ่านได้ ${n} ช่อง และรายการเงินเข้า-ออก ${(d.movements || []).length} รายการ ช่องสีชมพูคือค่าที่อ่านจากรูป ดูส่วนตรวจความถูกต้องก่อนบันทึก (เหตุผลภาษาไทยอาจสะกดเพี้ยน แก้ในช่องได้)`;
+  } catch (e) {
+    console.error(e);
+    st.classList.add("err");
+    st.textContent = e?.code === "no_ocr" ? "โหลดตัวอ่านรูปไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่" : e?.code === "no_images" ? "โหลดรูปไม่สำเร็จ ลองเลือกรูปใหม่" : "อ่านรูปไม่สำเร็จ ลองใหม่ หรือกรอกเอง";
+  } finally { btn.disabled = !S.images.length; }
+});
+function applyExtract(d) {
+  if (!d || typeof d !== "object") return;
+  FIELDS.forEach(s => s.f.forEach(([k]) => { if (d[k] != null && d[k] !== "") setField(k, d[k], true); }));
+  if (d.tipDeducted != null) setField("tipDeducted", d.tipDeducted, true);
+  if (Array.isArray(d.movements) && d.movements.length) {
+    const seen = new Set();
+    S.moves = d.movements.filter(m => { const key = m.no ?? `${m.type}|${m.amount}|${m.reason}|${m.time}`; if (seen.has(key)) return false; seen.add(key); return true; })
+      .map(m => ({ type: /in/i.test(m.type) ? "in" : "out", amount: num(m.amount), reason: m.reason || "", time: m.time || "", by: m.by || "" }));
+    renderMoves();
+  }
+  if (Array.isArray(d.payments) && d.payments.length) { S.pays = d.payments.map(p => ({ method: p.method || "", amount: num(p.amount) })); renderPays(); }
+  renderChecks(); checkDup(); saveDraft();
+}
+
+/* ---------- form events ---------- */
+$("#form").addEventListener("input", e => { e.target.classList.remove("ai"); renderChecks(); S.dupOk = false; checkDup(); saveDraft(); });
+document.addEventListener("focusout", e => { const t = e.target; if (t.classList?.contains("numin")) { const n = num(t.value); if (n != null) t.value = INT_KEYS.includes(t.id.slice(2)) ? String(n) : fmt(n); } });
+fieldEl("tipDeducted").addEventListener("input", e => { e.target.classList.remove("ai"); renderChecks(); saveDraft(); });
+$("#f_note").addEventListener("input", saveDraft);
+bindLines($("#moves"), () => S.moves, renderMoves);
+bindLines($("#pays"), () => S.pays, renderPays);
+$("#addMove").onclick = () => { S.moves.push({ type: "out", amount: "", reason: "", time: "" }); renderMoves(); $("#moves .line:last-child .amt")?.focus(); };
+$("#addPay").onclick = () => { S.pays.push({ method: "", amount: "" }); renderPays(); $("#pays .line:last-child input")?.focus(); };
+
+function resetForm(keepAssets) {
+  if (!keepAssets && S.assets) S.images.forEach(im => { if (im.id && !isSavedImage(im.id)) S.assets.delete(im.id).catch(() => {}); });
+  S.editingId = null; S.editingCreatedAt = null; S.images = []; S.dupOk = false;
+  S.moves = []; S.pays = [{ method: "เงินสด", amount: "" }, { method: "พร้อมเพย์", amount: "" }];
+  renderForm(); renderMoves(); renderPays(); renderThumbs();
+  setField("tipDeducted", null); $("#f_note").value = "";
+  $("#formTitle").textContent = "รูปหน้าจอปิดกะ"; $("#saveBtn").textContent = "บันทึกกะนี้";
+  $("#aiStatus").textContent = "เลือกรูปก่อน แล้วกดอ่านข้อมูล ระบบจะกรอกฟอร์มให้ ตรวจทานแล้วกดบันทึก"; $("#aiStatus").classList.remove("err");
+  $("#dupWarn").hidden = true; renderChecks(); clearDraft();
+}
+let clearArmed = false;
+$("#clearBtn").onclick = () => {
+  if (!clearArmed) { clearArmed = true; $("#clearBtn").textContent = "กดอีกครั้งเพื่อล้าง"; setTimeout(() => { clearArmed = false; $("#clearBtn").textContent = "ล้างฟอร์ม"; }, 3000); return; }
+  clearArmed = false; $("#clearBtn").textContent = "ล้างฟอร์ม"; resetForm(S.editingId != null);
+};
+
+function loadIntoForm(r) {
+  resetForm(true);
+  S.editingId = r.id; S.editingCreatedAt = r.createdAt || null;
+  FIELDS.forEach(s => s.f.forEach(([k]) => setField(k, r[k])));
+  setField("tipDeducted", r.tipDeducted); $("#f_note").value = r.note || "";
+  S.moves = (r.movements || []).map(m => ({ ...m })); S.pays = (r.payments || []).map(p => ({ ...p }));
+  S.images = (r.images || []).map(id => ({ id, url: null, blob: null, status: "" }));
+  renderMoves(); renderPays(); renderThumbs(); renderChecks();
+  $("#formTitle").textContent = `แก้ไขกะ ${dt(r.openedAt)}`; $("#saveBtn").textContent = "บันทึกการแก้ไข";
+}
+
+function checkDup() {
+  const r = readForm(), w = $("#dupWarn");
+  const d = r.openedAt && S.records.find(x => x.id !== S.editingId && x.openedAt === r.openedAt && (x.shiftNo || "") === (r.shiftNo || ""));
+  w.hidden = !d || S.dupOk;
+  if (d) w.textContent = `มีกะที่เปิด ${dt(r.openedAt)} บันทึกไว้แล้ว ถ้าตั้งใจบันทึกซ้ำ กด "บันทึก" อีกครั้ง`;
+  return !!d;
+}
+$("#saveBtn").onclick = async () => {
+  if (!S.db) { toast("ยังบันทึกไม่ได้: ต้องเข้าสู่ระบบก่อน"); return; }
+  const r = readForm();
+  if (!r.openedAt && !r.closedAt) { toast("กรอกวันที่-เวลาเปิดหรือปิดกะก่อนบันทึก"); fieldEl("openedAt").focus(); return; }
+  if (S.images.some(i => !i.id && i.status && i.status.startsWith("กำลัง"))) { toast("รอให้อัปโหลดรูปเสร็จก่อน"); return; }
+  if (checkDup() && !S.dupOk) { S.dupOk = true; $("#dupWarn").hidden = false; return; }
+  const btn = $("#saveBtn"); btn.disabled = true;
+  const now = Date.now();
+  const body = { ...r, updatedAt: now, createdAt: S.editingCreatedAt || now };
+  try {
+    const ref = S.editingId ? S.db.collection("shifts").doc(S.editingId) : S.db.collection("shifts").doc();
+    await ref.set(body);
+    toast(S.editingId ? "บันทึกการแก้ไขแล้ว" : "บันทึกกะแล้ว");
+    resetForm(true); switchTab("history");
+  } catch (e) {
+    toast(e?.code === "quota_exceeded" ? "พื้นที่เก็บข้อมูลเต็ม ลบกะเก่าที่ไม่ใช้ก่อน" : "บันทึกไม่สำเร็จ: ไม่มีสิทธิ์แก้ไข หรือการเชื่อมต่อขัดข้อง ลองอีกครั้ง");
+  } finally { btn.disabled = false; }
+};
+
+/* ---------- draft (per browser) ---------- */
+let draftT;
+function saveDraft() { clearTimeout(draftT); draftT = setTimeout(() => { try { if (S.editingId) return; const r = readForm(); localStorage.setItem(DRAFT_KEY, JSON.stringify({ r, moves: S.moves, pays: S.pays, images: S.images.filter(i => i.id).map(i => i.id) })); } catch {} }, 400); }
+function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch {} }
+function restoreDraft(raw) {
+  try {
+    const d = JSON.parse(raw || "null"); if (!d) return;
+    FIELDS.forEach(s => s.f.forEach(([k]) => setField(k, d.r?.[k])));
+    setField("tipDeducted", d.r?.tipDeducted); $("#f_note").value = d.r?.note || "";
+    S.moves = d.moves || []; S.pays = d.pays?.length ? d.pays : S.pays;
+    S.images = (d.images || []).map(id => ({ id, url: null, blob: null, status: "" }));
+    renderMoves(); renderPays(); renderThumbs(); renderChecks(); saveDraft();
+  } catch {}
+}
+
+/* ---------- tabs ---------- */
+function switchTab(t) {
+  S.tab = t;
+  document.querySelectorAll("nav.tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === t));
+  ["overview", "new", "slips", "reasons", "history", "summary"].forEach(v => $("#view-" + v).hidden = v !== t);
+  renderCurrent();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll("nav.tabs button").forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+
+/* ---------- history ---------- */
+function months() { const s = new Set(S.records.map(r => (r.businessDate || "").slice(0, 7)).filter(Boolean)); return [...s].sort().reverse(); }
+function fillMonthSelect(sel, withAll) {
+  const cur = sel.value, ms = months();
+  sel.innerHTML = (withAll ? `<option value="">ทุกเดือน</option>` : "") + ms.map(m => `<option value="${m}">${monthLabel(m)}</option>`).join("");
+  if ([...sel.options].some(o => o.value === cur)) sel.value = cur; else if (!withAll && ms[0]) sel.value = ms[0];
+}
+const sorted = () => [...S.records].sort((a, b) => (b.openedAt || b.closedAt || "").localeCompare(a.openedAt || a.closedAt || ""));
+function payOf(r, re) { return sum((r.payments || []).filter(p => re.test(p.method || "")).map(p => p.amount)); }
+function osOf(r) { return r.overShort != null ? r.overShort : (r.countedCash != null && r.expectedCash != null ? r.countedCash - r.expectedCash : null); }
+function statusChips(r) {
+  const a = audit(r), chips = [], os = osOf(r);
+  if (os != null) chips.push(eq(os, 0) ? `<span class="chip good">เงินตรง</span>` : `<span class="chip bad">${os < 0 ? "ขาด" : "เกิน"} ${fmt(Math.abs(os))}</span>`);
+  if (a.err.length) chips.push(`<span class="chip bad">ผิด ${a.err.length} จุด</span>`);
+  if (a.warn.length) chips.push(`<span class="chip warn">ควรตรวจ ${a.warn.length}</span>`);
+  if (a.slip) chips.push(`<span class="chip good">สลิป ${slipsOf(r.id).length} ใบ</span>`);
+  chips.push(a.bank ? `<span class="chip good">เทียบธนาคารแล้ว</span>` : `<span class="chip">ยังไม่เทียบธนาคาร</span>`);
+  return chips.join("");
+}
+
+/* ---------- overview ---------- */
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+function bizToday() { return ymd(new Date(Date.now() - 6 * 3600e3)); } /* กะกลางคืนที่ปิดก่อน 06:00 นับเป็นวันก่อนหน้า */
+function agg(rs) {
+  return { n: rs.length, rev: sum(rs.map(r => r.totalRevenue)), cash: sum(rs.map(r => payOf(r, CASH))), xfer: sum(rs.map(r => payOf(r, NONCASH))),
+    out: sum(rs.map(r => r.cashOut)), net: sum(rs.map(r => (r.cashSales || 0) + (r.cashIn || 0) - (r.cashOut || 0))),
+    os: sum(rs.map(r => osOf(r) || 0)), cust: sum(rs.map(r => r.customers)), tipOut: sum(rs.map(r => r.tipDeducted)) };
+}
+function renderOverview() {
+  const el = $("#view-overview");
+  if (!S.loaded) { el.innerHTML = `<div class="empty">กำลังโหลด…</div>`; return; }
+  if (!S.records.length) { el.innerHTML = `<div class="empty"><strong>ยังไม่มีกะที่บันทึก</strong>ไปที่ “บันทึกกะใหม่” แล้วอัปโหลดรูปหน้าจอปิดกะ หน้านี้จะสรุปยอดวันนี้ เดือนนี้ และสถานะการตรวจให้</div>`; return; }
+  const today = bizToday(), m = today.slice(0, 7);
+  const pm = (() => { const [y, mo] = m.split("-").map(Number); return ymd(new Date(y, mo - 2, 1)).slice(0, 7); })();
+  const dayRs = S.records.filter(r => r.businessDate === today);
+  const latest = sorted()[0];
+  const monRs = S.records.filter(r => (r.businessDate || "").startsWith(m));
+  const dayOfMonth = +today.slice(8, 10);
+  const prevSame = S.records.filter(r => (r.businessDate || "").startsWith(pm) && +(r.businessDate || "").slice(8, 10) <= dayOfMonth);
+  const D = agg(dayRs), M = agg(monRs), P = agg(prevSame);
+  const kpis = (A, lead) => `<div class="kpis">
+      <div class="kpi lead"><span>${lead}</span><strong>${fmt(A.rev)}</strong><small>${A.n} กะ${A.cust ? ` · ลูกค้า ${fmt0(A.cust)} คน` : ""}</small></div>
+      <div class="kpi"><span>รับเป็นเงินสด</span><strong>${fmt(A.cash)}</strong></div>
+      <div class="kpi"><span>รับเป็นโอน/พร้อมเพย์</span><strong>${fmt(A.xfer)}</strong>${A.tipOut ? `<small>รวมทิป ${fmt(A.tipOut)} ที่ไม่นับเป็นยอดขาย</small>` : ""}</div>
+      <div class="kpi"><span>จ่ายออกจากลิ้นชัก</span><strong>${fmt(A.out)}</strong></div>
+      <div class="kpi"><span>เงินสดสุทธิที่ร้านได้</span><strong>${fmt(A.net)}</strong><small>เงินสดขาย + เงินเข้า − เงินออก (ไม่รวมเงินทอนตั้งต้น)</small></div>
+      <div class="kpi"><span>เงินขาด/เกิน</span><strong style="color:${eq(A.os, 0) ? "var(--good)" : "var(--bad)"}">${fmt(A.os)}</strong></div>
+    </div>`;
+  // audit over month (fall back to all if month empty)
+  const auditSet = monRs.length ? monRs : S.records;
+  const au = auditSet.map(r => ({ r, a: audit(r) }));
+  const okSys = au.filter(x => !x.a.err.length).length, warnN = au.filter(x => x.a.warn.length).length, unbank = au.filter(x => !x.a.bank).length;
+  const verified = au.filter(x => x.a.bank), bankExp = sum(verified.map(x => payOf(x.r, NONCASH))), bankGot = sum(verified.map(x => x.r.bankReceived));
+  const todo = au.filter(x => x.a.err.length || x.a.warn.length || !x.a.bank).sort((a, b) => (b.r.openedAt || "").localeCompare(a.r.openedAt || ""));
+  el.innerHTML = `
+    <div class="panel"><div class="ov-head"><h2>วันนี้ · ${esc(dt(today))}</h2><span class="status">วันทำการนับตามวันที่เปิดกะ</span></div>
+      ${dayRs.length ? kpis(D, "รายได้รวมวันนี้") + `<div class="checks">${checkHtml(dayRs.flatMap(r => checks(r)))}</div>`
+        : `<div class="empty"><strong>ยังไม่มีกะของวันนี้</strong>${latest ? `กะล่าสุด ${esc(dt(latest.businessDate))} รายได้ ${fmt(latest.totalRevenue)} บาท <button class="btn sm" data-open="${esc(latest.id)}">ดูกะล่าสุด</button>` : ""}</div>`}
+    </div>
+    <div class="panel"><div class="ov-head"><h2>เดือนนี้ · ${esc(monthLabel(m))}</h2>
+      <span class="status">${P.n ? `ช่วงเดียวกันเดือนก่อน ${fmt(P.rev)} (${M.rev >= P.rev ? "+" : ""}${fmt(M.rev - P.rev)})` : "ยังไม่มีข้อมูลเดือนก่อนให้เทียบ"}</span></div>
+      ${monRs.length ? kpis(M, "รายได้รวมเดือนนี้") : `<div class="empty"><strong>ยังไม่มีกะในเดือนนี้</strong>บันทึกกะแรกของเดือนแล้วยอดจะขึ้นที่นี่</div>`}
+    </div>
+    <div class="panel"><div class="ov-head"><h2>สถานะการตรวจสอบ${monRs.length ? "เดือนนี้" : "ทั้งหมด"}</h2><span class="status">${au.length} กะ</span></div>
+      <div class="tally">
+        <div class="${okSys === au.length ? "good" : "bad"}"><strong>${okSys}/${au.length}</strong><span>กะที่ตัวเลขใน POS สัมพันธ์กันครบ</span></div>
+        <div class="${warnN ? "warn" : "good"}"><strong>${warnN}</strong><span>กะที่มีจุดควรตรวจเพิ่ม</span></div>
+        <div class="${au.every(x => x.a.slip) ? "good" : "warn"}"><strong>${au.filter(x => x.a.slip).length}/${au.length}</strong><span>กะที่ตรวจสลิปแล้ว</span></div>
+        <div class="${unbank ? "warn" : "good"}"><strong>${au.length - unbank}/${au.length}</strong><span>กะที่เทียบกับบัญชีธนาคารแล้ว</span></div>
+        <div class="${eq(bankGot, bankExp) ? "good" : "bad"}"><strong>${verified.length ? fmt(bankGot - bankExp) : "–"}</strong><span>ส่วนต่างเงินโอน (บัญชีจริง − POS)</span></div>
+      </div>
+      ${todo.length ? `<div class="todo">${todo.map(({ r, a }) => `<button data-open="${esc(r.id)}"><div><strong>${esc(dt(r.businessDate))}${r.shiftNo ? ` · กะ ${esc(r.shiftNo)}` : ""}</strong><ul>
+          ${a.err.map(x => `<li>${esc(x.t)}</li>`).join("")}${a.warn.map(x => `<li>${esc(x.t)}</li>`).join("")}${!a.slip ? `<li>ยังไม่ได้ใส่สลิปของเงินโอน ${fmt(payOf(r, NONCASH))}</li>` : ""}${!a.bank ? `<li>ยังไม่ได้เทียบเงินโอนกับบัญชีธนาคาร</li>` : ""}</ul></div>
+          <span class="num">${fmt(r.totalRevenue)}</span></button>`).join("")}</div>`
+        : `<div class="check ok"><b>✓</b><div>ทุกกะตรวจครบและตรงกับบัญชีแล้ว</div></div>`}
+    </div>`;
+}
+$("#view-overview").addEventListener("click", e => { const b = e.target.closest("[data-open]"); if (b) openDetail(b.dataset.open); });
+function renderHistory() {
+  fillMonthSelect($("#hMonth"), true);
+  const m = $("#hMonth").value, q = $("#hSearch").value.trim().toLowerCase();
+  let rs = sorted().filter(r => !m || (r.businessDate || "").startsWith(m));
+  if (q) rs = rs.filter(r => [r.closedBy, r.note, r.shiftNo, ...(r.movements || []).map(x => x.reason)].join(" ").toLowerCase().includes(q));
+  const el = $("#hList");
+  if (!S.loaded) { el.innerHTML = `<div class="empty">กำลังโหลด…</div>`; return; }
+  if (!rs.length) { el.innerHTML = S.records.length ? `<div class="empty"><strong>ไม่พบกะที่ตรงกับตัวกรอง</strong>ลองเปลี่ยนเดือนหรือคำค้นหา</div>`
+    : `<div class="empty"><strong>ยังไม่มีกะที่บันทึก</strong>ไปที่ “บันทึกกะใหม่” แล้วอัปโหลดรูปหน้าจอปิดกะเพื่อเริ่ม</div>`; return; }
+  el.innerHTML = rs.map(r => `
+    <button class="item" data-open="${esc(r.id)}">
+      <div><div class="when">${esc(dt(r.businessDate))} ${r.shiftNo ? `· กะ ${esc(r.shiftNo)}` : ""}</div>
+        <div class="meta"><span>${esc(hm(r.openedAt))}–${esc(hm(r.closedAt))}</span>${r.closedBy ? `<span>${esc(r.closedBy)}</span>` : ""}<span>เงินออก ${fmt(r.cashOut)}</span>${r.images?.length ? `<span>📷 ${r.images.length}</span>` : ""}</div></div>
+      <div><div class="amt">${fmt(r.totalRevenue)}</div><div class="chips">${statusChips(r)}</div></div>
+    </button>`).join("");
+}
+$("#hMonth").onchange = renderHistory; $("#hSearch").oninput = renderHistory;
+$("#hList").addEventListener("click", e => { const b = e.target.closest("[data-open]"); if (b) openDetail(b.dataset.open); });
+
+/* ---------- detail sheet ---------- */
+function openDetail(id) {
+  const r = S.records.find(x => x.id === id); if (!r) return;
+  const kv = (rows) => `<dl class="kv">${rows.map(([l, v, t]) => `<dt class="${t ? "t" : ""}">${esc(l)}</dt><dd class="${t ? "t" : ""}">${v}</dd>`).join("")}</dl>`;
+  const sec = FIELDS.slice(1).map(s => `<div class="sec"><h3>${esc(s.title)}</h3>${kv(s.f.map(([k, l, , t]) => [l, INT_KEYS.includes(k) ? fmt0(r[k]) : fmt(r[k]), t]))}</div>`).join("");
+  const c = checks(r);
+  const root = $("#sheetRoot");
+  root.innerHTML = `<div class="sheet-back" id="sb"><div class="sheet" role="dialog" aria-modal="true" aria-label="รายละเอียดกะ">
+    <div class="sheet-head"><div><h2>${esc(dt(r.businessDate))}${r.shiftNo ? ` · กะ ${esc(r.shiftNo)}` : ""}</h2>
+      <div class="status">เปิด ${esc(dt(r.openedAt))} · ปิด ${esc(dt(r.closedAt))}${r.closedBy ? ` · ${esc(r.closedBy)}` : ""}</div></div>
+      <button class="btn ghost sm" id="closeSheet" aria-label="ปิด">✕</button></div>
+    ${r.images?.length ? `<div class="thumbs">${r.images.map((im, i) => `<div class="thumb"><img ${imgA(im)} alt="รูปที่ ${i + 1}"></div>`).join("")}</div>` : ""}
+    <div class="checks">${checkHtml(c) || `<span class="d">ไม่มีข้อมูลพอสำหรับตรวจ</span>`}</div>
+    <div class="verify"><strong style="font-family:var(--f-display)">เทียบกับยอดจริง</strong>
+      <div class="row"><label for="v_bank">เงินโอน/พร้อมเพย์ที่เข้าบัญชีจริง <span class="d">(POS ${fmt(payOf(r, NONCASH))})</span></label><input id="v_bank" inputmode="decimal" class="numin" value="${r.bankReceived != null ? fmt(r.bankReceived) : ""}"></div>
+      <div class="row"><label for="v_cash">เงินสดที่รับมอบจริง <span class="d">(ถอนออก ${fmt(r.withdrawn ?? r.countedCash)})</span></label><input id="v_cash" inputmode="decimal" class="numin" value="${r.cashReceived != null ? fmt(r.cashReceived) : ""}"></div>
+      <div class="status">สลิป ${slipsOf(r.id).length} ใบ รวม ${fmt(sum(slipsOf(r.id).map(s => s.amount)))}</div>
+      <div class="actions"><button class="btn sm" id="vSlips">ตรวจสลิป</button><button class="btn sm" id="vFill">ใส่ตามยอด POS</button><button class="btn sm primary" id="vSave">บันทึกการตรวจ</button></div></div>
+    <div class="two-col">${sec}</div>
+    ${r.payments?.length ? `<div class="sec"><h3>การชำระเงิน</h3>${kv([...r.payments.map(p => [p.method || "-", fmt(p.amount)]), ...(r.tipDeducted ? [["หัก ทิป", fmt(r.tipDeducted)]] : [])])}</div>` : ""}
+    ${r.movements?.length ? `<div class="sec"><h3>เงินเข้า-ออกระหว่างกะ</h3><div class="tbl-wrap"><table><thead><tr><th>เวลา</th><th>เหตุผล</th><th class="n">เข้า</th><th class="n">ออก</th></tr></thead><tbody>
+      ${r.movements.map((m, i, all) => `<tr><td class="num">${esc(hm(m.time))}</td><td>${esc(m.reason)}${(f => f.length ? `<div class="chips left">${chipHtml(f)}</div>` : "")(moveFlags(m, i, all, r))}</td><td class="n">${m.type === "in" ? fmt(m.amount) : ""}</td><td class="n">${m.type === "out" ? fmt(m.amount) : ""}</td></tr>`).join("")}
+      </tbody></table></div></div>` : ""}
+    ${r.note ? `<div class="sec"><h3>หมายเหตุ</h3><div>${esc(r.note)}</div></div>` : ""}
+    <div class="actions" id="detailActions"><button class="btn danger" id="delBtn">ลบกะนี้</button><button class="btn primary" id="editBtn">แก้ไข</button></div>
+  </div></div>`;
+  const close = () => { root.innerHTML = ""; document.removeEventListener("keydown", onKey); };
+  const onKey = e => { if (e.key === "Escape" && !document.querySelector(".light")) close(); };
+  document.addEventListener("keydown", onKey);
+  $("#sb").onclick = e => { if (e.target.id === "sb") close(); const z = e.target.closest("[data-zoom]"); if (z) lightbox(z.dataset.zoom); };
+  $("#closeSheet").onclick = close;
+  $("#editBtn").onclick = () => { close(); loadIntoForm(r); switchTab("new"); };
+  $("#vSlips").onclick = () => { close(); S.slipShift = id; switchTab("slips"); };
+  $("#vFill").onclick = () => { $("#v_bank").value = fmt(payOf(r, NONCASH)); const w = r.withdrawn ?? r.countedCash; if (w != null) $("#v_cash").value = fmt(w); };
+  $("#vSave").onclick = async () => {
+    if (!S.db) { toast("ยังบันทึกไม่ได้: ต้องเข้าสู่ระบบก่อน"); return; }
+    const b = $("#vSave"); b.disabled = true;
+    try { await S.db.collection("shifts").doc(id).update({ bankReceived: num($("#v_bank").value), cashReceived: num($("#v_cash").value), verifiedAt: Date.now(), updatedAt: Date.now() });
+      toast("บันทึกการตรวจแล้ว"); close(); }
+    catch { toast("บันทึกไม่สำเร็จ: ไม่มีสิทธิ์ หรือการเชื่อมต่อขัดข้อง"); b.disabled = false; }
+  };
+  $("#delBtn").onclick = () => {
+    $("#detailActions").innerHTML = `<div class="confirm">ลบกะนี้และรูปที่แนบถาวร? <button class="btn sm" id="noDel">ยกเลิก</button><button class="btn sm danger" id="yesDel">ลบเลย</button></div>`;
+    $("#noDel").onclick = () => { close(); openDetail(id); };
+    $("#yesDel").onclick = async () => {
+      try { await S.db.collection("shifts").doc(id).delete(); (r.images || []).forEach(a => S.assets?.delete(a).catch(() => {})); toast("ลบแล้ว"); close(); }
+      catch { toast("ลบไม่สำเร็จ: ไม่มีสิทธิ์ หรือการเชื่อมต่อขัดข้อง"); }
+    };
+  };
+  $("#closeSheet").focus();
+}
+
+/* ---------- summary ---------- */
+function categorize(reason) { const c = canon(reason), it = cfgOf(c); return it?.category || autoCat(c); }
+function autoCat(reason) {
+  const s = (reason || "").trim();
+  if (/ทิป/.test(s)) return "ทิปพนักงาน";
+  if (/^ค่าแรง|ค่าจ้าง|ช่วยพิเศษ/.test(s)) return "ค่าแรงรายวัน";
+  if (/เบิก/.test(s)) return "เบิกเงินล่วงหน้า";
+  if (/ซื้อ|ค่าน้ำมัน|ค่าของ/.test(s)) return "ซื้อของ/ค่าใช้จ่าย";
+  return "อื่นๆ";
+}
+function renderSummary() {
+  fillMonthSelect($("#sMonth"), false);
+  const m = $("#sMonth").value, body = $("#sBody");
+  const rs = S.records.filter(r => (r.businessDate || "").startsWith(m));
+  if (!S.loaded) { body.innerHTML = `<div class="empty">กำลังโหลด…</div>`; return; }
+  if (!rs.length) { body.innerHTML = `<div class="empty"><strong>ยังไม่มีข้อมูลสำหรับสรุป</strong>บันทึกกะอย่างน้อย 1 กะ แล้วหน้านี้จะแสดงยอดรวม กราฟรายวัน และค่าใช้จ่ายจากลิ้นชัก</div>`; return; }
+  const rev = sum(rs.map(r => r.totalRevenue)), cash = sum(rs.map(r => payOf(r, /สด|cash/i))), xfer = sum(rs.map(r => payOf(r, /^(?!.*(สด|cash)).*/i)));
+  const outs = sum(rs.map(r => r.cashOut)), cust = sum(rs.map(r => r.customers));
+  const os = sum(rs.map(r => r.overShort != null ? r.overShort : (r.countedCash != null && r.expectedCash != null ? r.countedCash - r.expectedCash : 0)));
+  const svc = sum(rs.map(r => r.serviceCharge)), disc = sum(rs.map(r => r.discount));
+  // daily
+  const byDay = {}; rs.forEach(r => { byDay[r.businessDate] = (byDay[r.businessDate] || 0) + (r.totalRevenue || 0); });
+  const [y, mo] = m.split("-").map(Number), days = new Date(y, mo, 0).getDate();
+  const vals = Array.from({ length: days }, (_, i) => byDay[`${m}-${String(i + 1).padStart(2, "0")}`] || 0);
+  const max = Math.max(...vals, 1), step = niceStep(max), top = Math.ceil(max / step) * step;
+  const W = 760, H = 230, L = 52, R = 10, T = 12, B = 28, bw = (W - L - R) / days;
+  const yS = v => T + (H - T - B) * (1 - v / top);
+  let grid = ""; for (let v = 0; v <= top + 1e-9; v += step) grid += `<line x1="${L}" x2="${W - R}" y1="${yS(v)}" y2="${yS(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${yS(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${v >= 1000 ? (v / 1000) + "k" : v}</text>`;
+  const bars = vals.map((v, i) => v ? `<rect x="${L + i * bw + bw * .15}" y="${yS(v)}" width="${bw * .7}" height="${yS(0) - yS(v)}" rx="2" fill="var(--accent)"><title>${i + 1} ${TH_MON[mo - 1]}: ${fmt(v)}</title></rect>` : "").join("");
+  const xl = vals.map((_, i) => (i === 0 || (i + 1) % 5 === 0) ? `<text x="${L + i * bw + bw / 2}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${i + 1}</text>` : "").join("");
+  // expenses
+  const allOut = rs.flatMap(r => (r.movements || []).filter(x => x.type === "out"));
+  const cat = {}; allOut.forEach(x => { const c = categorize(x.reason); cat[c] = (cat[c] || 0) + (num(x.amount) || 0); });
+  const reasons = {}; allOut.forEach(x => { const k = x.reason ? canon(x.reason) : "(ไม่ระบุ)"; reasons[k] = reasons[k] || { n: 0, a: 0 }; reasons[k].n++; reasons[k].a += num(x.amount) || 0; });
+  const catRows = Object.entries(cat).sort((a, b) => b[1] - a[1]), cmax = Math.max(...catRows.map(c => c[1]), 1);
+  const rRows = Object.entries(reasons).sort((a, b) => b[1].a - a[1].a);
+  body.innerHTML = `
+    <div class="kpis">
+      <div class="kpi lead"><span>รายได้รวม ${esc(monthLabel(m))}</span><strong>${fmt(rev)}</strong></div>
+      <div class="kpi"><span>จำนวนกะ</span><strong>${rs.length}</strong></div>
+      <div class="kpi"><span>เฉลี่ยต่อกะ</span><strong>${fmt(rev / rs.length)}</strong></div>
+      <div class="kpi"><span>เงินสด / โอน-พร้อมเพย์</span><strong>${fmt0(cash)} / ${fmt0(xfer)}</strong></div>
+      <div class="kpi"><span>เงินออกจากลิ้นชัก</span><strong>${fmt(outs)}</strong></div>
+      <div class="kpi"><span>ลูกค้ารวม · ต่อหัว</span><strong>${fmt0(cust)} · ${cust ? fmt0(rev / cust) : "–"}</strong></div>
+      <div class="kpi"><span>Service charge · ส่วนลด</span><strong>${fmt0(svc)} · ${fmt0(disc)}</strong></div>
+      <div class="kpi"><span>เงินขาด/เกินสะสม</span><strong style="color:${eq(os, 0) ? "var(--good)" : "var(--bad)"}">${fmt(os)}</strong></div>
+    </div>
+    <div class="panel"><h2>รายได้รายวัน</h2>
+      <div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="กราฟรายได้รายวัน">${grid}${bars}${xl}</svg></div>
+      <div class="status">นับตามวันที่เปิดกะ (กะที่ข้ามเที่ยงคืนนับเป็นวันที่เปิด)</div></div>
+    <div class="two-col">
+      <div class="panel"><h2>เงินออกตามหมวด</h2>
+        ${catRows.length ? `<div class="tbl-wrap"><table><tbody>${catRows.map(([c, a]) => `<tr><td>${esc(c)}</td><td style="width:40%"><div class="bar-cell"><i style="width:${(a / cmax * 100).toFixed(1)}%"></i></div></td><td class="n">${fmt(a)}</td></tr>`).join("")}</tbody></table></div>` : `<div class="status">ไม่มีรายการเงินออก</div>`}
+        <div class="status">จัดหมวดอัตโนมัติจากเหตุผลที่พิมพ์ในเครื่อง POS</div></div>
+      <div class="panel"><h2>เหตุผลเงินออก</h2>
+        <div class="tbl-wrap"><table><thead><tr><th>เหตุผล</th><th class="n">ครั้ง</th><th class="n">รวม</th></tr></thead><tbody>
+        ${rRows.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="n">${v.n}</td><td class="n">${fmt(v.a)}</td></tr>`).join("") || `<tr><td colspan="3">–</td></tr>`}</tbody></table></div></div>
+    </div>`;
+}
+function niceStep(max) { const raw = max / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p; }
+$("#sMonth").onchange = renderSummary;
+
+/* ---------- CSV ---------- */
+const csvCell = v => { const s = v == null ? "" : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+async function saveCsv(name, rows) {
+  const text = "\ufeff" + rows.map(r => r.map(csvCell).join(",")).join("\n");
+  try { const u = URL.createObjectURL(new Blob([text], { type: "text/csv;charset=utf-8" })); const a = document.createElement("a"); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); } catch (e) { if (e?.code !== "cancelled" && e?.code !== "declined") toast("ดาวน์โหลดไม่สำเร็จ"); }
+}
+$("#csvShifts").onclick = () => {
+  const m = $("#sMonth").value, rs = sorted().reverse().filter(r => (r.businessDate || "").startsWith(m));
+  const keys = FIELDS.flatMap(s => s.f.map(f => f[0])), labels = FIELDS.flatMap(s => s.f.map(f => f[1]));
+  saveCsv(`ยอดปิดกะ-${m}.csv`, [["วันที่", ...labels, "เงินสด(ชำระ)", "โอน/พร้อมเพย์", "หักทิป", "หมายเหตุ"],
+    ...rs.map(r => [r.businessDate, ...keys.map(k => r[k]), payOf(r, /สด|cash/i), payOf(r, /^(?!.*(สด|cash)).*/i), r.tipDeducted, r.note])]);
+};
+$("#csvMoves").onclick = () => {
+  const m = $("#sMonth").value, rs = sorted().reverse().filter(r => (r.businessDate || "").startsWith(m));
+  saveCsv(`เงินเข้าออก-${m}.csv`, [["วันที่กะ", "เวลา", "ประเภท", "จำนวน", "เหตุผล", "หมวด", "โดย"],
+    ...rs.flatMap(r => (r.movements || []).map(x => [r.businessDate, x.time, x.type === "in" ? "เข้า" : "ออก", x.amount, x.reason, x.type === "out" ? categorize(x.reason) : "", x.by]))]);
+};
+
+/* ---------- slips ---------- */
+S.slips = []; S.settings = {}; S.slipShift = null; S.slipBusy = false;
+function slipsOf(id) { return S.slips.filter(s => s.shiftId === id); }
+function renderCurrent() { ({ overview: renderOverview, history: renderHistory, summary: renderSummary, slips: renderSlips, reasons: renderReasons }[S.tab] || (() => {}))(); }
+
+/* ---------- reasons: master list + suspicion checks ---------- */
+S.reasonCfg = { items: [], notSame: [] };
+const CATS = ["ค่าแรงรายวัน", "ทิปพนักงาน", "เบิกเงินล่วงหน้า", "ซื้อของ/ค่าใช้จ่าย", "เงินเข้า/รับคืน", "อื่นๆ"];
+const GENERIC = /(ค่าแรง|ค่าจ้าง|ค่าตอบแทน|ค่า|จ่าย|เงิน|ให้)/g;
+const normR = s => (s || "").toLowerCase().replace(/\s+/g, "").replace(/(.)\1{2,}/g, "$1");
+const subjR = s => normR(s).replace(GENERIC, "");
+function cfgOf(name) { const n = normR(name); return n ? S.reasonCfg.items.find(i => normR(i.name) === n) : undefined; }
+function canon(name) { let cur = (name || "").trim(); for (let i = 0; i < 6; i++) { const c = cfgOf(cur); if (!c) break; if (c.aliasOf) { cur = c.aliasOf; continue; } cur = c.name; break; } return cur; }
+function lev(a, b) {
+  a = [...a]; b = [...b]; if (!a.length) return b.length; if (!b.length) return a.length;
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) { const cur = [i]; for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = cur; }
+  return prev[b.length];
+}
+const isNotSame = (a, b) => S.reasonCfg.notSame.some(([x, y]) => (normR(x) === normR(a) && normR(y) === normR(b)) || (normR(x) === normR(b) && normR(y) === normR(a)));
+const SIMC = new Map();
+/* returns null or a label for why two different names look like the same thing */
+function similarPair(a, b) {
+  const key = a + "\u0000" + b; if (SIMC.has(key)) return SIMC.get(key);
+  let res = null;
+  if (a && b && a !== b && canon(a) !== canon(b) && !isNotSame(a, b)) {
+    const na = normR(a), nb = normR(b), sa = subjR(a), sb = subjR(b);
+    if (na === nb) res = "สะกด/เว้นวรรคต่างกัน";
+    else if (sa.length >= 2 && sa === sb) res = "คำหลักเหมือนกัน";
+    else if (Math.max([...na].length, [...nb].length) >= 5 && lev(na, nb) <= 2) res = "พิมพ์ต่างกันเล็กน้อย";
+    else if ([...sa].length >= 3 && [...sb].length >= 3 && lev(sa, sb) <= 1) res = "คำหลักเกือบเหมือนกัน";
+  }
+  SIMC.set(key, res); return res;
+}
+let RIDX = null;
+function ridx() {
+  if (RIDX) return RIDX;
+  const byC = new Map(), names = new Map();
+  S.records.forEach(r => (r.movements || []).forEach(o => {
+    const n = (o.reason || "").trim(); if (!n) return;
+    if (!names.has(n)) names.set(n, new Set()); names.get(n).add(r.id);
+    if (o.type === "out") { const c = canon(n); if (!byC.has(c)) byC.set(c, []); byC.get(c).push({ rid: r.id, a: num(o.amount) }); }
+  }));
+  S.reasonCfg.items.forEach(i => { if (!names.has(i.name)) names.set(i.name, new Set()); });
+  SIMC.clear();
+  return RIDX = { byC, names };
+}
+const median = a => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+const chipHtml = f => f.map(([c, t]) => `<span class="chip ${c}">${esc(t)}</span>`).join("");
+/* flags for one movement m (index idx) within its shift's list mv; r = the shift ({id} for the form) */
+function moveFlags(m, idx, mv, r) {
+  const f = [], name = (m.reason || "").trim(), cn = canon(name), amt = num(m.amount), rid = r?.id;
+  if (amt == null && !name) return f;
+  if (!name) f.push(["warn", "ไม่ระบุเหตุผล"]);
+  if (m.type === "in" && /^(ค่า|ซื้อ|จ่าย)/.test(name)) f.push(["warn", "เงินเข้าแต่ชื่อเหมือนค่าใช้จ่าย"]);
+  if (m.type === "out") mv.forEach((o, j) => {
+    if (j === idx || o.type !== "out") return;
+    const on = (o.reason || "").trim(), oa = num(o.amount);
+    if (name && on && canon(on) === cn) f.push(oa === amt ? ["bad", `ซ้ำกับรายการที่ ${j + 1}`] : ["warn", `เหตุผลเดียวกับรายการที่ ${j + 1}`]);
+    else if (name && on && similarPair(name, on)) f.push(["bad", `ชื่อคล้ายรายการที่ ${j + 1} “${on}”`]);
+    else if (amt != null && oa === amt && m.time && o.time && Math.abs(Date.parse(m.time) - Date.parse(o.time)) <= 10 * 60e3) f.push(["warn", `ยอดเท่ารายการที่ ${j + 1} ในเวลาใกล้กัน`]);
+  });
+  if (name) {
+    const ix = ridx(), hist = (ix.byC.get(cn) || []).filter(h => h.rid !== rid && h.a != null).map(h => h.a);
+    const seenElsewhere = [...ix.names].some(([n, ids]) => canon(n) === cn && ([...ids].some(id => id !== rid) || (ids.size === 0)));
+    const it = cfgOf(cn) || cfgOf(name);
+    if (!it?.approved && !seenElsewhere) f.push(["warn", "เหตุผลใหม่"]);
+    if (m.type === "out" && hist.length >= 3 && amt != null) { const md = median(hist); if (amt > md * 1.5) f.push(["warn", `สูงกว่าปกติ (ปกติ ${fmt0(md)})`]); }
+    if (!seenElsewhere) { const sim = [...ix.names.keys()].find(n => n !== name && similarPair(name, n)); if (sim) f.push(["warn", `ชื่อคล้ายเหตุผลเดิม “${sim}”`]); }
+  }
+  const seen = new Set(); return f.filter(x => !seen.has(x[1]) && seen.add(x[1]));
+}
+let cfgChain = Promise.resolve();
+function saveCfg(mut, okMsg) {
+  if (!S.db) { toast("ต้องเข้าสู่ระบบก่อน"); return; }
+  cfgChain = cfgChain.then(async () => {
+    const next = { items: S.reasonCfg.items.map(i => ({ ...i })), notSame: S.reasonCfg.notSame.map(p => [...p]) };
+    mut(next);
+    try { await S.db.doc("settings/reasons").set(next); S.reasonCfg = next; RIDX = null; SIMC.clear(); renderCurrent(); if (okMsg) toast(okMsg); }
+    catch { toast("บันทึกไม่สำเร็จ: ไม่มีสิทธิ์ หรือการเชื่อมต่อขัดข้อง"); }
+  });
+}
+function upsert(cfg, name) { const n = normR(name); let it = cfg.items.find(i => normR(i.name) === n); if (!it) { it = { name: name.trim(), category: autoCat(name), approved: false }; cfg.items.push(it); } return it; }
+function renderReasons() {
+  fillMonthSelect($("#rMonth"), true);
+  const m = $("#rMonth").value;
+  if (!S.loaded) { $("#rSus").innerHTML = `<div class="empty">กำลังโหลด…</div>`; return; }
+  // suspicious movements
+  const rs = sorted().filter(r => !m || (r.businessDate || "").startsWith(m));
+  const sus = rs.flatMap(r => (r.movements || []).map((mv, i, all) => ({ r, mv, f: moveFlags(mv, i, all, r) })).filter(x => x.f.length));
+  sus.sort((a, b) => (b.f.some(x => x[0] === "bad") - a.f.some(x => x[0] === "bad")) || (b.r.openedAt || "").localeCompare(a.r.openedAt || ""));
+  $("#rSusN").textContent = `${sus.length} รายการ`;
+  $("#rSus").innerHTML = sus.length ? `<div class="sus">${sus.map(({ r, mv, f }) => `
+    <button data-open="${esc(r.id)}"><div><strong>${esc(mv.reason || "(ไม่ระบุ)")}</strong>
+      <div class="meta">${esc(dt(r.businessDate))} · ${esc(hm(mv.time) || "--:--")} · ${mv.type === "in" ? "เงินเข้า" : "เงินออก"}</div>
+      <div class="chips left">${chipHtml(f)}</div></div><span class="num" style="font-weight:600">${fmt(mv.amount)}</span></button>`).join("")}</div>`
+    : `<div class="check ok"><b>✓</b><div>ไม่พบรายการซ้ำ ชื่อคล้าย หรือยอดผิดปกติ${m ? "ในช่วงนี้" : ""}</div></div>`;
+  // name pairs
+  const ix = ridx(), names = [...ix.names.keys()], pairs = [];
+  for (let i = 0; i < names.length; i++) for (let j = i + 1; j < names.length; j++) { const why = similarPair(names[i], names[j]); if (why) pairs.push([names[i], names[j], why]); }
+  const uses = n => ix.names.get(n)?.size || 0;
+  $("#rPairs").innerHTML = pairs.length ? `<div class="sus">${pairs.map(([a, b, why], k) => `
+    <div class="pair"><div class="names"><b>${esc(a)}</b> <span class="status">(${uses(a)} กะ)</span> ↔ <b>${esc(b)}</b> <span class="status">(${uses(b)} กะ)</span><div class="chips left"><span class="chip warn">${esc(why)}</span></div></div>
+      <div class="acts"><button class="btn sm" data-merge="${k}" data-to="0">รวมเป็น “${esc(a)}”</button><button class="btn sm" data-merge="${k}" data-to="1">รวมเป็น “${esc(b)}”</button><button class="btn sm ghost" data-notsame="${k}">คนละรายการ</button></div></div>`).join("")}</div>`
+    : `<div class="status">ยังไม่พบชื่อที่น่าจะเป็นรายการเดียวกัน</div>`;
+  $("#rPairs").dataset.pairs = JSON.stringify(pairs);
+  // master table
+  const rows = names.map(n => {
+    const it = cfgOf(n), alias = it?.aliasOf ? canon(n) : null;
+    const amts = S.records.flatMap(r => (r.movements || []).filter(o => (o.reason || "").trim() === n).map(o => ({ a: num(o.amount), d: r.businessDate })));
+    return { n, it, alias, cnt: amts.length, tot: sum(amts.map(x => x.a)), last: amts.map(x => x.d).sort().pop() };
+  }).sort((a, b) => (!!a.it?.approved - !!b.it?.approved) || b.tot - a.tot);
+  $("#rTable").innerHTML = rows.length ? `<table><thead><tr><th>เหตุผล</th><th>หมวด</th><th class="n">ครั้ง</th><th class="n">รวม</th><th class="n">เฉลี่ย</th><th>ล่าสุด</th><th>สถานะ</th></tr></thead><tbody>
+    ${rows.map(x => `<tr><td>${esc(x.n)}</td>
+      <td><select data-cat="${esc(x.n)}" aria-label="หมวดของ ${esc(x.n)}">${CATS.map(c => `<option ${c === (x.it?.category || autoCat(x.n)) ? "selected" : ""}>${esc(c)}</option>`).join("")}</select></td>
+      <td class="n">${x.cnt}</td><td class="n">${fmt(x.tot)}</td><td class="n">${x.cnt ? fmt(x.tot / x.cnt) : "–"}</td><td class="num">${esc(x.last ? dt(x.last) : "–")}</td>
+      <td>${x.alias ? `<span class="chip">รวมกับ “${esc(x.alias)}”</span> <button class="btn sm ghost" data-unalias="${esc(x.n)}">แยกออก</button>`
+        : x.it?.approved ? `<span class="chip good">ยืนยันแล้ว</span>` : `<span class="chip warn">ใหม่</span> <button class="btn sm" data-approve="${esc(x.n)}">ยืนยัน</button>`}</td></tr>`).join("")}
+    </tbody></table>` : `<div class="empty"><strong>ยังไม่มีเหตุผลเงินเข้า-ออก</strong>บันทึกกะที่มีรายการเงินออกแล้วรายชื่อจะขึ้นที่นี่</div>`;
+}
+$("#rMonth").onchange = renderReasons;
+$("#rSus").addEventListener("click", e => { const b = e.target.closest("[data-open]"); if (b) openDetail(b.dataset.open); });
+$("#rPairs").addEventListener("click", e => {
+  const pairs = JSON.parse($("#rPairs").dataset.pairs || "[]");
+  const mb = e.target.closest("[data-merge]"), nb = e.target.closest("[data-notsame]");
+  if (mb) { const [a, b] = pairs[+mb.dataset.merge]; const to = mb.dataset.to === "0" ? a : b, from = to === a ? b : a;
+    saveCfg(c => { const t = upsert(c, to); t.approved = true; const f = upsert(c, from); f.aliasOf = t.name; f.approved = true; }, `รวม “${from}” เข้ากับ “${to}” แล้ว`); }
+  if (nb) { const [a, b] = pairs[+nb.dataset.notsame]; saveCfg(c => { c.notSame.push([a, b]); upsert(c, a).approved = true; upsert(c, b).approved = true; }, "บันทึกว่าเป็นคนละรายการแล้ว"); }
+});
+$("#rTable").addEventListener("click", e => {
+  const a = e.target.closest("[data-approve]"), u = e.target.closest("[data-unalias]");
+  if (a) saveCfg(c => { upsert(c, a.dataset.approve).approved = true; }, "ยืนยันแล้ว");
+  if (u) saveCfg(c => { delete upsert(c, u.dataset.unalias).aliasOf; }, "แยกออกแล้ว");
+});
+$("#rTable").addEventListener("change", e => { const s = e.target.closest("[data-cat]"); if (s) saveCfg(c => { const it = upsert(c, s.dataset.cat); it.category = s.value; it.approved = true; }, "เปลี่ยนหมวดแล้ว"); });
+$("#rApproveAll").onclick = () => { const ns = [...ridx().names.keys()].filter(n => !cfgOf(n)?.approved); if (!ns.length) { toast("ไม่มีเหตุผลใหม่ที่ต้องยืนยัน"); return; } saveCfg(c => ns.forEach(n => { upsert(c, n).approved = true; }), `ยืนยัน ${ns.length} เหตุผลแล้ว`); };
+const normName = s => (s || "").replace(/^(นาย|นางสาว|นาง|น\.ส\.|ด\.ญ\.|ด\.ช\.|mr\.?|mrs\.?|ms\.?|miss|บจก\.?|บริษัท)\s*/i, "").replace(/[\s.]/g, "").toLowerCase();
+const slipKey = s => s.qr || (s.ref ? "ref:" + String(s.ref).replace(/\s/g, "") : null);
+function slipFlags(s, sh) {
+  const f = [];
+  if (s.isSlip === false) f.push(["bad", "ไม่ใช่สลิป"]);
+  if (s.amount == null) f.push(["bad", "ต้องกรอกยอด"]);
+  const k = slipKey(s);
+  if (k) { const d = S.slips.filter(x => x.id !== s.id && slipKey(x) === k); if (d.length) f.push(["bad", d.some(x => x.shiftId !== s.shiftId) ? "สลิปซ้ำกับกะอื่น" : "สลิปซ้ำ"]); }
+  else if (s.amount != null && s.time && S.slips.some(x => x.id !== s.id && x.amount === s.amount && x.time === s.time && (x.sender || "") === (s.sender || ""))) f.push(["warn", "อาจซ้ำ"]);
+  if (!s.time) f.push(["warn", "ไม่มีเวลา"]);
+  else if (sh?.openedAt && sh?.closedAt) { const t = Date.parse(s.time), o = Date.parse(sh.openedAt), c = Date.parse(sh.closedAt); if (!isNaN(t) && !isNaN(o) && !isNaN(c) && (t < o - 18e5 || t > c + 18e5)) f.push(["warn", "นอกเวลากะ"]); }
+  const rc = normName(S.settings.receiver);
+  if (rc && s.receiver && !normName(s.receiver).includes(rc.slice(0, Math.min(4, rc.length)))) f.push(["bad", "ผู้รับไม่ตรงบัญชีร้าน"]);
+  if (!k && s.isSlip !== false) f.push(["warn", "ไม่มีเลขอ้างอิง"]);
+  return f;
+}
+function renderSlips() {
+  const sel = $("#slShift"), rs = sorted();
+  if (!S.slipShift || !rs.some(r => r.id === S.slipShift)) S.slipShift = rs[0]?.id || null;
+  sel.innerHTML = rs.map(r => `<option value="${esc(r.id)}">${esc(`${dt(r.businessDate)}${r.shiftNo ? ` · กะ ${r.shiftNo}` : ""} · โอนตาม POS ${fmt0(payOf(r, NONCASH))}`)}</option>`).join("") || `<option value="">ยังไม่มีกะ</option>`;
+  sel.value = S.slipShift || "";
+  if (document.activeElement !== $("#slReceiver")) $("#slReceiver").value = S.settings.receiver || "";
+  const r = S.records.find(x => x.id === S.slipShift);
+  if (!S.loaded) { $("#slList").innerHTML = `<div class="empty">กำลังโหลด…</div>`; return; }
+  if (!r) { $("#slTally").innerHTML = ""; $("#slList").innerHTML = `<div class="empty"><strong>ยังไม่มีกะให้ผูกสลิป</strong>บันทึกกะจากหน้า “บันทึกกะใหม่” ก่อน แล้วค่อยเพิ่มสลิปของกะนั้น</div>`; return; }
+  const sl = slipsOf(r.id).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+  const exp = payOf(r, NONCASH), got = sum(sl.map(s => s.amount)), d = got - exp;
+  const fl = sl.map(s => ({ s, f: slipFlags(s, r) }));
+  const nBad = fl.filter(x => x.f.some(f => f[0] === "bad")).length, nWarn = fl.filter(x => x.f.length && !x.f.some(f => f[0] === "bad")).length;
+  $("#slTally").innerHTML = `<div class="tally">
+    <div><strong>${fmt(exp)}</strong><span>เงินโอน/พร้อมเพย์ตาม POS</span></div>
+    <div><strong>${fmt(got)}</strong><span>ยอดสลิปรวม ${sl.length} ใบ</span></div>
+    <div class="${sl.length ? (eq(d, 0) ? "good" : "bad") : ""}"><strong>${sl.length ? (d > 0 ? "+" : "") + fmt(d) : "–"}</strong><span>ส่วนต่าง (สลิป − POS)</span></div>
+    <div class="${nBad ? "bad" : nWarn ? "warn" : "good"}"><strong>${nBad} / ${nWarn}</strong><span>สลิปมีปัญหา / ควรดู</span></div></div>`;
+  $("#slList").innerHTML = sl.length ? `<div class="slips">${fl.map(({ s, f }) => `
+    <div class="slip" data-id="${esc(s.id)}">
+      ${s.assetId ? `<img ${imgA(s.assetId)} alt="สลิป">` : `<div class="noimg">–</div>`}
+      <div class="slip-main"><div><strong class="num">${esc(hm(s.time) || "--:--")}</strong> ${esc(s.sender || "ไม่ทราบผู้โอน")}</div>
+        <div class="meta">${esc([s.bank, s.receiver ? "ถึง " + s.receiver : "", s.ref ? "อ้างอิง " + s.ref : ""].filter(Boolean).join(" · "))}</div>
+        ${f.length ? `<div class="chips left">${f.map(([c, t]) => `<span class="chip ${c}">${esc(t)}</span>`).join("")}</div>` : ""}</div>
+      <input class="amt" inputmode="decimal" value="${s.amount != null ? fmt(s.amount) : ""}" placeholder="ยอด" aria-label="ยอดเงินในสลิป">
+      <button class="rm" data-del="${esc(s.id)}" aria-label="ลบสลิป">✕</button>
+    </div>`).join("")}</div>`
+    : `<div class="empty"><strong>ยังไม่มีสลิปของกะนี้</strong>เพิ่มรูปสลิป ระบบจะรวมยอดแล้วเทียบกับเงินโอน ${fmt(exp)} บาทใน POS</div>`;
+}
+async function readQR(blob) {
+  if (typeof jsQR !== "function") return null;
+  try {
+    const bmp = await createImageBitmap(blob);
+    for (const [x, y, w, h] of [[0, 0, 1, 1], [0, .4, 1, .6], [.35, .45, .65, .55]]) {
+      const sw = bmp.width * w, sh = bmp.height * h, k = Math.min(2, 1100 / Math.max(sw, sh));
+      const c = document.createElement("canvas"); c.width = Math.round(sw * k); c.height = Math.round(sh * k);
+      const g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(bmp, bmp.width * x, bmp.height * y, sw, sh, 0, 0, c.width, c.height);
+      const res = jsQR(g.getImageData(0, 0, c.width, c.height).data, c.width, c.height, { inversionAttempts: "dontInvert" });
+      if (res?.data) return res.data;
+    }
+  } catch {}
+  return null;
+}
+async function processSlips(files) {
+  const list = [...files].filter(f => /^image\//.test(f.type)); if (!list.length) return;
+  if (!S.db) { toast("ต้องเข้าสู่ระบบก่อน"); return; }
+  const shiftId = S.slipShift; if (!shiftId) { toast("บันทึกกะก่อน แล้วค่อยเพิ่มสลิป"); return; }
+  if (S.slipBusy) { toast("รอให้ชุดก่อนหน้าอ่านเสร็จก่อน"); return; }
+  S.slipBusy = true; const st = $("#slStatus"); st.classList.remove("err");
+  let ocrFail = 0, noAmt = 0;
+  try {
+    for (let i = 0; i < list.length; i++) {
+      const lab = ` สลิป ${i + 1}/${list.length}`;
+      st.textContent = `เตรียม${lab}…`;
+      const blob = await compress(list[i], 1600), qr = await readQR(blob); let assetId = null;
+      if (S.assets) { try { assetId = (await S.assets.upload(blob)).id; } catch {} }
+      let p = {};
+      try { p = ShiftOCR.parseSlip(await ocrText(blob, st, lab)); } catch (e) { console.error(e); ocrFail++; }
+      if (p.amount == null) noAmt++;
+      await S.db.collection("slips").doc().set({ shiftId, assetId, qr: qr || null, amount: p.amount ?? null, time: p.time || null, bank: p.bank || null,
+        sender: null, receiver: null, ref: p.ref || null, createdAt: Date.now() }, { quiet: true });
+    }
+    st.textContent = `เพิ่ม ${list.length} สลิปแล้ว` + (noAmt ? ` · ${noAmt} ใบอ่านยอดไม่ได้ กรอกยอดเองในช่องด้านขวา` : "") + (ocrFail ? " · ตัวอ่านรูปมีปัญหาบางใบ" : "") + " ตรวจรายการที่มีป้ายสีแดงหรือส้ม";
+    if (ocrFail || noAmt) st.classList.add("err");
+  } catch (e) { console.error(e); st.classList.add("err"); st.textContent = "เพิ่มสลิปไม่สำเร็จ ลองอีกครั้ง"; }
+  finally { S.slipBusy = false; S.db.refresh?.("slips"); }
+}
+$("#slShift").onchange = e => { S.slipShift = e.target.value; renderSlips(); };
+$("#slFile").addEventListener("change", e => { processSlips(e.target.files); e.target.value = ""; });
+const slDrop = $("#slDrop");
+["dragenter", "dragover"].forEach(t => slDrop.addEventListener(t, e => { e.preventDefault(); slDrop.classList.add("over"); }));
+["dragleave", "drop"].forEach(t => slDrop.addEventListener(t, e => { e.preventDefault(); slDrop.classList.remove("over"); }));
+slDrop.addEventListener("drop", e => processSlips(e.dataTransfer.files));
+document.addEventListener("paste", e => { if (S.tab !== "slips") return; const f = [...(e.clipboardData?.files || [])]; if (f.length) { e.preventDefault(); processSlips(f); } });
+$("#slList").addEventListener("click", async e => {
+  const z = e.target.closest("[data-zoom]"); if (z) { lightbox(z.dataset.zoom); return; }
+  const b = e.target.closest("[data-del]"); if (!b) return;
+  if (!b.dataset.armed) { b.dataset.armed = "1"; b.textContent = "ลบ?"; setTimeout(() => { if (b.isConnected) { delete b.dataset.armed; b.textContent = "✕"; } }, 3000); return; }
+  const s = S.slips.find(x => x.id === b.dataset.del);
+  try { await S.db.collection("slips").doc(b.dataset.del).delete(); if (s?.assetId) S.assets?.delete(s.assetId).catch(() => {}); } catch { toast("ลบไม่สำเร็จ"); }
+});
+$("#slList").addEventListener("change", e => {
+  if (!e.target.classList.contains("amt")) return;
+  const id = e.target.closest(".slip").dataset.id, s = S.slips.find(x => x.id === id), n = num(e.target.value);
+  if (s && n !== s.amount) S.db.collection("slips").doc(id).update({ amount: n, edited: true }).catch(() => toast("บันทึกยอดไม่สำเร็จ"));
+});
+$("#slReceiver").addEventListener("change", e => {
+  if (!S.db) return; S.db.doc("settings/main").set({ ...S.settings, receiver: e.target.value.trim() }).then(() => toast("บันทึกชื่อบัญชีร้านแล้ว")).catch(() => toast("บันทึกชื่อบัญชีไม่สำเร็จ"));
+});
+$("#slCsv").onclick = () => {
+  const r = S.records.find(x => x.id === S.slipShift); if (!r) return;
+  const sl = slipsOf(r.id).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+  saveCsv(`สลิป-${r.businessDate}.csv`, [["เวลา", "ยอด", "ผู้โอน", "ธนาคาร", "ผู้รับ", "เลขอ้างอิง", "ข้อสังเกต"],
+    ...sl.map(s => [s.time, s.amount, s.sender, s.bank, s.receiver, s.ref, slipFlags(s, r).map(f => f[1]).join(" / ")])]);
+};
+
+/* ---------- toast ---------- */
+let toastT;
+function toast(msg) { document.querySelector(".toast")?.remove(); const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); t.textContent = msg; document.body.appendChild(t); clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 3200); }
+
+/* ---------- datalists ---------- */
+document.body.insertAdjacentHTML("beforeend", `<datalist id="payList"><option value="เงินสด"><option value="พร้อมเพย์"><option value="โอนเงิน"><option value="บัตรเครดิต"><option value="QR Code"></datalist><datalist id="reasonList"></datalist>`);
+function refreshReasonList() { const set = new Set(S.records.flatMap(r => (r.movements || []).map(m => (m.reason || "").trim())).filter(Boolean)); $("#reasonList").innerHTML = [...set].slice(0, 80).map(x => `<option value="${esc(x)}">`).join(""); }
+
+/* ---------- boot ---------- */
+let draftRaw = null; try { draftRaw = localStorage.getItem(DRAFT_KEY); } catch {}
+resetForm(true); restoreDraft(draftRaw);
+
+/* ---------- backend: Supabase ---------- */
+const CFG = window.APP_CONFIG || {};
+let sb = null;
+const BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+function makeDb(uid) {
+  const cache = {}, subs = {};
+  const snapOf = t => ({ docs: (cache[t] || []).map(r => ({ id: r.id, exists: true, data: () => r.data })) });
+  const emit = t => (subs[t] || []).forEach(fn => { try { fn(); } catch (e) { console.error(e); } });
+  async function refresh(t) {
+    const { data, error } = await sb.from(t).select("id,data").order("id").limit(5000);
+    if (error) throw error; cache[t] = data || []; emit(t);
+  }
+  const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  function docRef(t, id) {
+    return {
+      id,
+      async set(data, opt) { const { error } = await sb.from(t).upsert({ id, owner: uid, data, updated_at: new Date().toISOString() }); if (error) throw error; if (!opt?.quiet) await refresh(t); },
+      async update(patch) {
+        const { data: row, error } = await sb.from(t).select("data").eq("id", id).single(); if (error) throw error;
+        const { error: e2 } = await sb.from(t).update({ data: { ...row.data, ...patch }, updated_at: new Date().toISOString() }).eq("id", id); if (e2) throw e2;
+        await refresh(t);
+      },
+      async delete() { const { error } = await sb.from(t).delete().eq("id", id); if (error) throw error; await refresh(t); },
+      onSnapshot(fn, err) { (subs[t] = subs[t] || []).push(() => { const r = (cache[t] || []).find(x => x.id === id); fn({ exists: !!r, data: () => r?.data }); }); refresh(t).catch(e => err && err(e)); return () => {}; },
+    };
+  }
+  return {
+    refresh: t => refresh(t).catch(console.error),
+    collection: t => ({
+      doc: id => docRef(t, id || rid()),
+      onSnapshot(fn, err) { (subs[t] = subs[t] || []).push(() => fn(snapOf(t))); refresh(t).catch(e => err && err(e)); return () => {}; },
+    }),
+    doc: path => { const [t, id] = path.split("/"); return docRef(t, id); },
+  };
+}
+function makeAssets(uid) {
+  return {
+    async upload(blob) { const id = `${uid}/${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}.jpg`; const { error } = await sb.storage.from("images").upload(id, blob, { contentType: "image/jpeg" }); if (error) throw error; return { id }; },
+    async delete(id) { const { error } = await sb.storage.from("images").remove([id]); if (error) throw error; },
+    async download(id) { const { data, error } = await sb.storage.from("images").download(id); if (error) throw error; return data; },
+  };
+}
+/* private images: show through short-lived signed links */
+const URLC = new Map(); let hydT = null;
+setInterval(() => URLC.clear(), 45 * 60e3);
+function imgA(id) { const u = URLC.get(id); return u ? `src="${esc(u)}" data-zoom="${esc(u)}"` : `src="${BLANK}" data-img="${esc(id)}"`; }
+function hydrate() {
+  if (hydT || !sb) return;
+  hydT = setTimeout(async () => {
+    hydT = null;
+    const els = [...document.querySelectorAll("img[data-img]")], ids = [...new Set(els.map(e => e.dataset.img))].filter(id => !URLC.has(id));
+    if (ids.length) { try { const { data } = await sb.storage.from("images").createSignedUrls(ids, 3600); (data || []).forEach(d => { if (d.signedUrl) URLC.set(d.path, d.signedUrl); }); } catch (e) { console.error(e); } }
+    document.querySelectorAll("img[data-img]").forEach(im => { const u = URLC.get(im.dataset.img); if (u) { im.src = u; im.dataset.zoom = u; im.removeAttribute("data-img"); } });
+  }, 30);
+}
+new MutationObserver(() => { if (document.querySelector("img[data-img]")) hydrate(); }).observe(document.body, { childList: true, subtree: true });
+
+function subscribe(db) {
+  db.collection("slips").onSnapshot(snap => { S.slips = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderCurrent(); }, () => {});
+  db.doc("settings/reasons").onSnapshot(snap => { const d = snap.exists ? snap.data() : {}; S.reasonCfg = { items: [...(d.items || [])], notSame: [...(d.notSame || [])] }; RIDX = null; SIMC.clear(); renderCurrent(); if (S.tab === "new") updateSums(); }, () => {});
+  db.doc("settings/main").onSnapshot(snap => { S.settings = snap.exists ? { ...snap.data() } : {}; if (S.tab === "slips") renderSlips(); }, () => {});
+  db.collection("shifts").onSnapshot(snap => {
+    S.records = snap.docs.map(d => ({ id: d.id, ...d.data() })); S.loaded = true;
+    RIDX = null; refreshReasonList();
+    renderCurrent();
+  }, () => { S.loaded = true; $("#dbBanner").hidden = false; renderCurrent(); });
+}
+function enter(user) {
+  $("#login").hidden = true; $("#app").hidden = false;
+  $("#who").textContent = user.email || "";
+  S.db = makeDb(user.id); S.assets = makeAssets(user.id);
+  renderThumbs(); subscribe(S.db);
+}
+function showLogin(note, disabled) {
+  $("#app").hidden = true; $("#login").hidden = false;
+  if (note) $("#loginNote").textContent = note;
+  ["lgEmail", "lgPass", "lgBtn"].forEach(id => document.getElementById(id).disabled = !!disabled);
+}
+$("#loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const btn = $("#lgBtn"); btn.disabled = true; $("#lgErr").textContent = "";
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email: $("#lgEmail").value.trim(), password: $("#lgPass").value });
+    if (error) throw error;
+    $("#lgPass").value = ""; enter(data.user);
+  } catch (err) {
+    $("#lgErr").textContent = /invalid/i.test(err?.message || "") ? "อีเมลหรือรหัสผ่านไม่ถูกต้อง" : "เข้าสู่ระบบไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วลองใหม่";
+  } finally { btn.disabled = false; }
+});
+$("#logout").onclick = async () => { try { await sb.auth.signOut(); } catch {} location.reload(); };
+(async () => {
+  if (!CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY || /ใส่|YOUR/i.test(CFG.SUPABASE_URL)) { showLogin("ยังไม่ได้ตั้งค่า: ใส่ SUPABASE_URL และ SUPABASE_ANON_KEY ในไฟล์ config.js ตามคู่มือ", true); return; }
+  if (typeof supabase === "undefined") { showLogin("โหลดระบบไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วโหลดหน้าใหม่", true); return; }
+  sb = supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true } });
+  const { data } = await sb.auth.getSession();
+  if (data?.session?.user) enter(data.session.user); else showLogin();
+})();
+})();
+</script>
+</body>
+</html>
